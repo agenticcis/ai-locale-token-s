@@ -60,7 +60,7 @@
       <div><label for="gpu">Scheda video (GPU)</label><select id="gpu"></select><div class="nota" id="nota-gpu"></div></div>
       <div><label for="hd">HD / SSD</label><select id="hd"></select><div class="nota">Non cambia i token/s: cambia i tempi di caricamento del modello.</div></div>
       <div><label for="model">Modello</label><select id="model"></select><div class="nota" id="nota-model"></div></div>
-      <div><label for="quant">Quantizzazione</label><select id="quant"></select><div class="nota">Meno bit = modello piu' piccolo = piu' veloce (e un po' meno preciso).</div></div>
+      <div><label for="quant">Quantizzazione</label><select id="quant"></select><div class="nota" id="nota-quant">Meno bit = modello piu' piccolo = piu' veloce (e un po' meno preciso).</div></div>
     </div>
   </div>
 
@@ -128,6 +128,16 @@ function notaGpu(){
   }
 }
 
+function aggiornaNotaQuant(){
+    const nq = $('nota-quant'); if(!nq) return;
+    const q = D.quants.find(x=>x.id===$('quant').value);
+    const m = D.models.find(x=>x.id===$('model').value);
+    const gb = m ? (m.params*q.bpw/8) : null;
+    const tipo = q.tipo==='K-quant'
+      ? 'quantizzazione <b>a blocchi</b> (K-quant): i bit non sono fissi per peso, ogni blocco ha i suoi metadati. Per questo il nome dice 4 ma il valore reale &egrave; 4,9.'
+      : 'quantizzazione a bit <b>fissi</b> per peso: nessun metadato di blocco: il numero del nome &egrave; il valore reale.';
+    nq.innerHTML = `${tipo}${gb?` <br>Con il modello scelto i pesi occupano <b>${gb.toFixed(1)} GB</b>.`:''}`;
+}
 function calcola(){
   const cpu = D.cpus.find(c=>c.id===$('cpu').value);
   const ram = D.ram.find(r=>r.id===$('ram').value);
@@ -224,7 +234,7 @@ function avvia(){
   // ram_sizes e' un array di numeri (non oggetti con id): opzioni costruite a mano.
   $('ramsize').innerHTML = D.ram_sizes.map(g=>`<option value="${g}">${g} GB</option>`).join('');
   opt($('hd'), D.hd, h=>h.name);
-  opt($('quant'), D.quants, q=>q.name);
+  opt($('quant'), D.quants, q=>q.name + (q.tipo==='K-quant' ? ' · a blocchi' : ''));
   opt($('model'), D.models, m=>m.name + (m.auto ? ' (auto)' : ''));
   // Default robusto (gli id possono cambiare quando i modelli si aggiornano da soli):
   // Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + un modello ~1.5B in Q4.
@@ -233,10 +243,11 @@ function avvia(){
   scegli('quant','q4km'); scegli('model', modelloDefault());
   popolaGpu();
   ['cpu','ram','ramsize','hd','quant','model'].forEach(id=>$(id).addEventListener('change',()=>{
-    if(id==='cpu'){ popolaGpu(); } if(id==='model'){ aggiornaNotaModello(); } calcola();
+    if(id==='cpu'){ popolaGpu(); } if(id==='model'){ aggiornaNotaModello(); } if(id==='model'||id==='quant'){ aggiornaNotaQuant(); } calcola();
   }));
   $('gpu').addEventListener('change',()=>{ notaGpu(); calcola(); });
   aggiornaNotaModello();
+  aggiornaNotaQuant();
   calcola();
 }
 

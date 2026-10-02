@@ -774,32 +774,38 @@
   {
    "id": "q3km",
    "name": "Q3_K_M (3,9 bit per peso)",
-   "bpw": 3.9
+   "bpw": 3.9,
+   "tipo": "K-quant"
   },
   {
    "id": "q4km",
    "name": "Q4_K_M (4,9 bit per peso)",
-   "bpw": 4.85
+   "bpw": 4.85,
+   "tipo": "K-quant"
   },
   {
    "id": "q5km",
    "name": "Q5_K_M (5,7 bit per peso)",
-   "bpw": 5.7
+   "bpw": 5.7,
+   "tipo": "K-quant"
   },
   {
    "id": "q6k",
    "name": "Q6_K (6,6 bit per peso)",
-   "bpw": 6.6
+   "bpw": 6.6,
+   "tipo": "K-quant"
   },
   {
    "id": "q8",
    "name": "Q8_0 (8,5 bit per peso)",
-   "bpw": 8.5
+   "bpw": 8.5,
+   "tipo": "tonda"
   },
   {
    "id": "fp16",
    "name": "FP16 (16 bit)",
-   "bpw": 16.0
+   "bpw": 16.0,
+   "tipo": "tonda"
   }
  ],
  "models": [

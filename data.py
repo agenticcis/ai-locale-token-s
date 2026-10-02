@@ -147,13 +147,17 @@ HD_TYPES = [
 ]
 
 # --- Quantizzazioni: bit per peso. Meno bit = modello piu' piccolo = piu' veloce. ---
+# "tipo": nessuna = pochi bit dedicati per blocco + metadati (K-quant), molto usata.
+#        tonda   = numero di bit FISSO per peso, nessun overhead di blocco.
+# "bpw" NON e' il numero nel nome: Q4_K_M sta a 4,85 bit per peso (il name dice "4", ma il
+# blocco aggiunge i metadati). Su un 70B la differenza sono ~7 GB: cambia "ci sta" o no.
 QUANTS = [
-    {"id": "q3km",  "name": "Q3_K_M (3,9 bit per peso)", "bpw": 3.9},
-    {"id": "q4km",  "name": "Q4_K_M (4,9 bit per peso)", "bpw": 4.85},
-    {"id": "q5km",  "name": "Q5_K_M (5,7 bit per peso)", "bpw": 5.7},
-    {"id": "q6k",   "name": "Q6_K (6,6 bit per peso)",   "bpw": 6.6},
-    {"id": "q8",    "name": "Q8_0 (8,5 bit per peso)",   "bpw": 8.5},
-    {"id": "fp16",  "name": "FP16 (16 bit)",     "bpw": 16.0},
+    {"id": "q3km",  "name": "Q3_K_M (3,9 bit per peso)", "bpw": 3.9,  "tipo": "K-quant"},
+    {"id": "q4km",  "name": "Q4_K_M (4,9 bit per peso)", "bpw": 4.85, "tipo": "K-quant"},
+    {"id": "q5km",  "name": "Q5_K_M (5,7 bit per peso)", "bpw": 5.7,  "tipo": "K-quant"},
+    {"id": "q6k",   "name": "Q6_K (6,6 bit per peso)",   "bpw": 6.6,  "tipo": "K-quant"},
+    {"id": "q8",    "name": "Q8_0 (8,5 bit per peso)",   "bpw": 8.5,  "tipo": "tonda"},
+    {"id": "fp16",  "name": "FP16 (16 bit)",             "bpw": 16.0, "tipo": "tonda"},
 ]
 
 # --- Modelli (parametri reali, miliardi). I nomi ricalcano quelli su ollama.com. ---
