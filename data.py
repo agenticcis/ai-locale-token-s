@@ -20,6 +20,16 @@ CPUS = [
     {"id": "r7_7840u",  "name": "AMD Ryzen 7 7840U",      "brand": "AMD",   "tput": 75, "igpu": "radeon780m"},
     {"id": "r7_7800x3d","name": "AMD Ryzen 7 7800X3D",    "brand": "AMD",   "tput": 70, "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
     {"id": "r9_7950x",  "name": "AMD Ryzen 9 7950X",      "brand": "AMD",   "tput": 85, "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    # --- generazioni 2025-2026 (local AI) ---
+    {"id": "r7_9700x",  "name": "AMD Ryzen 7 9700X",      "brand": "AMD",   "tput": 89, "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    {"id": "r9_9950x",  "name": "AMD Ryzen 9 9950X",      "brand": "AMD",   "tput": 89, "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    {"id": "ai9_hx370", "name": "AMD Ryzen AI 9 HX 370",  "brand": "AMD",   "tput": 120, "igpu": "radeon890m"},
+    {"id": "ai9_hx470", "name": "AMD Ryzen AI 9 HX 470",  "brand": "AMD",   "tput": 120, "igpu": "radeon890m"},
+    {"id": "ai_max_395","name": "AMD Ryzen AI Max+ 395 (Strix Halo)", "brand": "AMD", "tput": 256, "igpu": "radeon8060s"},
+    {"id": "cu7_155h",  "name": "Intel Core Ultra 7 155H","brand": "Intel", "tput": 120, "igpu": "arc8core"},
+    {"id": "cu7_258v",  "name": "Intel Core Ultra 7 258V","brand": "Intel", "tput": 136, "igpu": "arc140v"},
+    {"id": "cu9_285k",  "name": "Intel Core Ultra 9 285K","brand": "Intel", "tput": 89, "igpu": "arc4core"},
+    {"id": "sd_x_elite", "name": "Qualcomm Snapdragon X Elite", "brand": "Qualcomm", "tput": 135, "igpu": "adreno"},
     {"id": "i5_8250u",  "name": "Intel Core i5-8250U",    "brand": "Intel", "tput": 34, "igpu": "uhd620"},
     {"id": "i5_1135g7", "name": "Intel Core i5-1135G7",   "brand": "Intel", "tput": 42, "igpu": "irisxe80"},
     {"id": "i7_1165g7", "name": "Intel Core i7-1165G7",   "brand": "Intel", "tput": 45, "igpu": "irisxe96"},
@@ -48,6 +58,13 @@ IGPUS = {
     "irisxe96":  {"name": "Intel Iris Xe 96EU (integrata)",    "vram": 4, "tput": 50},
     "radeon680m":{"name": "Radeon 680M (integrata)",           "vram": 4, "tput": 62},
     "radeon780m":{"name": "Radeon 780M (integrata)",           "vram": 8, "tput": 75},
+    # --- integrate 2025-2026 ---
+    "radeon890m":{"name": "Radeon 890M (integrata)",           "vram": 16, "tput": 120},
+    "radeon8060s":{"name": "Radeon 8060S (integrata, Strix Halo)","vram": 64, "tput": 256},
+    "arc8core":  {"name": "Intel Arc 8-core (integrata)",      "vram": 16, "tput": 120},
+    "arc140v":   {"name": "Intel Arc 140V (integrata)",        "vram": 16, "tput": 136},
+    "arc4core":  {"name": "Intel Arc 4-core (integrata)",      "vram": 8,  "tput": 89},
+    "adreno":    {"name": "Qualcomm Adreno (integrata)",       "vram": 16, "tput": 135},
     "unified":   {"name": "Memoria unificata Apple",           "vram": 0, "tput": 0},
 }
 
@@ -80,6 +97,12 @@ GPUS = [
     {"id": "rx7900xtx","name": "AMD RX 7900 XTX",    "brand": "AMD",    "vram": 24, "tput": 960},
     {"id": "arc_a770", "name": "Intel Arc A770",     "brand": "Intel",  "vram": 16, "tput": 560},
     {"id": "arc_b580", "name": "Intel Arc B580",     "brand": "Intel",  "vram": 12, "tput": 456},
+    # --- generazioni 2025-2026 ---
+    {"id": "rtx5060ti","name": "NVIDIA RTX 5060 Ti 16GB","brand": "NVIDIA", "vram": 16, "tput": 448},
+    {"id": "rx9060xt", "name": "AMD RX 9060 XT 16GB", "brand": "AMD",   "vram": 16, "tput": 322},
+    {"id": "rx9070",   "name": "AMD RX 9070 16GB",    "brand": "AMD",   "vram": 16, "tput": 640},
+    {"id": "rx9070xt", "name": "AMD RX 9070 XT 16GB", "brand": "AMD",   "vram": 16, "tput": 640},
+    {"id": "arc_b580_24","name":"Intel Arc B580 24GB", "brand": "Intel", "vram": 24, "tput": 456},
 ]
 
 # --- Tipi di memoria di sistema (per il moltiplicatore HD/tipo RAM) ---

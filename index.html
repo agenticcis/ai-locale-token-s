@@ -20,6 +20,8 @@
   select{width:100%;padding:10px;border-radius:9px;background:#0b0e12;color:var(--testo);border:1px solid var(--bordo);font-size:15px}
   select:focus{outline:2px solid var(--acc2);outline-offset:1px}
   .nota{font-size:12px;color:var(--dim);margin-top:5px;min-height:15px}
+  .nota.ok-nota{color:var(--acc)}
+  .tag-agg{margin-left:6px;font-size:10px;color:var(--acc2);border:1px solid var(--bordo);border-radius:6px;padding:1px 5px;vertical-align:middle}
   #risultato{margin-top:16px}
   .big{font-size:44px;font-weight:800;line-height:1;color:var(--acc)}
   .big small{font-size:16px;font-weight:600;color:var(--dim)}
@@ -45,7 +47,8 @@
 <body>
 <header>
   <h1>Quanti token al secondo?</h1>
-  <p>Scegli il tuo PC e il modello: stima quanti token al secondo riesce a generare in locale.</p>
+  <p>Scegli il tuo PC e il modello: stima quanti token al secondo riesce a generare in locale.
+    <span class="tag-agg" id="agg">dati aggiornati</span></p>
 </header>
 
 <main>
@@ -75,7 +78,8 @@
 </main>
 
 <footer>
-  <p id="locale">Dati aggiornati a mano. Modelli e nomi ricalcano il catalogo pubblico di Ollama / LM Studio.</p>
+  <p id="locale">Hardware: lista curata a mano sulle generazioni 2023-2026. Modelli: aggiornati
+  automaticamente dal catalogo pubblico di Hugging Face (i piu' scaricati).</p>
   <p>Stime a scopo informativo. Realizzato da un agente AI (OpenHands) per conto del proprietario.</p>
 </footer>
 
@@ -98,9 +102,11 @@ function popolaGpu(){
   const cpu = D.cpus.find(c=>c.id===$('cpu').value);
   const g = [];
   const ig = risolviIgpu(cpu);
-  if(ig) g.push({id:'igpu', name:ig.name, tipo:'integrata'});
+  if(ig) g.push({id:'igpu', name:'★ ' + ig.name, tipo:'integrata'});
   D.gpus.forEach(x=>g.push({id:x.id, name:x.name, tipo:x.tipo||'discreta'}));
   opt($('gpu'), g, x=>x.name);
+  // Abbinamento AUTOMATICO: scegliendo la CPU, la GPU preselezionata e' la sua integrata.
+  if(ig) $('gpu').value = 'igpu';
   notaGpu();
 }
 
@@ -108,10 +114,13 @@ function notaGpu(){
   const cpu = D.cpus.find(c=>c.id===$('cpu').value);
   const ig = risolviIgpu(cpu);
   if($('gpu').value==='igpu' && ig){
-    $('nota-gpu').textContent = ig.unified ? 'Memoria unificata: la GPU usa la RAM di sistema.'
-      : `Integrata nella CPU: usa la RAM di sistema (${ig.vram} GB riservabili).`;
+    $('nota-gpu').classList.add('ok-nota');
+    $('nota-gpu').textContent = ig.unified
+      ? `Abbinata a ${cpu.name}: memoria unificata, la GPU usa la RAM di sistema.`
+      : `Abbinata automaticamente a ${cpu.name}: usa la RAM di sistema (${ig.vram} GB riservabili).`;
   } else {
-    $('nota-gpu').textContent = 'GPU discreta: se il modello ci entra, va molto piu veloce.';
+    $('nota-gpu').classList.remove('ok-nota');
+    $('nota-gpu').textContent = 'GPU discreta scelta a mano: se il modello ci entra, va molto piu veloce.';
   }
 }
 
@@ -173,19 +182,35 @@ function calcola(){
 
 function aggiornaNotaModello(){
   const m = D.models.find(x=>x.id===$('model').value);
-  $('nota-model').textContent = `${m.params} miliardi di parametri · famiglia ${m.family}`;
+  if(!m){ $('nota-model').textContent=''; return; }
+  const agg = m.aggiornato ? ` · agg. ${m.aggiornato}` : '';
+  $('nota-model').textContent = `${m.params} miliardi di parametri · famiglia ${m.family}${agg}`;
+}
+
+// Con la lista modelli aggiornata automaticamente gli id cambiano: la scelta di default
+// non puo' essere un id fisso, va cercata per caratteristiche.
+function modelloDefault(){
+  const pref = D.models.find(m=>m.id==='qwen25_15b') || D.models.find(m=>m.name.includes('1.5B'))
+            || D.models.find(m=>m.params>=1 && m.params<=2) || D.models[0];
+  return pref.id;
 }
 
 function avvia(){
+  if(D.meta && D.meta.dati_aggiornati){
+    const n = D.meta.modelli_auto ? ` · ${D.meta.modelli_auto} modelli dal vivo` : '';
+    $('agg').textContent = `dati aggiornati al ${D.meta.dati_aggiornati}${n}`;
+  }
   opt($('cpu'), D.cpus, c=>c.name);
   opt($('ram'), D.ram, r=>r.name);
   opt($('hd'), D.hd, h=>h.name);
   opt($('quant'), D.quants, q=>q.name);
   opt($('model'), D.models, m=>m.name);
-  // default come l'esempio: Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + Qwen2.5 1.5B Q4
-  $('cpu').value='r5_3500u'; $('ram').value='ddr4'; $('hd').value='nvme3';
-  $('model').value='qwen25_15b'; $('quant').value='q4km';
-  popolaGpu(); $('gpu').value='igpu';
+  // Default robusto (gli id possono cambiare quando i modelli si aggiornano da soli):
+  // Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + un modello ~1.5B in Q4.
+  const scegli=(id,v)=>{ const s=$(id); if([...s.options].some(o=>o.value===v)) s.value=v; };
+  scegli('cpu','r5_3500u'); scegli('ram','ddr4'); scegli('hd','nvme3');
+  scegli('quant','q4km'); scegli('model', modelloDefault());
+  popolaGpu();
   ['cpu','ram','hd','quant','model'].forEach(id=>$(id).addEventListener('change',()=>{
     if(id==='cpu'){ popolaGpu(); } if(id==='model'){ aggiornaNotaModello(); } calcola();
   }));
@@ -195,7 +220,7 @@ function avvia(){
 }
 
 fetch('data.json').then(r=>r.json()).then(d=>{ D=d; avvia(); })
-  .catch(e=>{ document.querySelector('main').innerHTML='<div class="card">Errore nel caricare data.json. Apri il sito da un server locale (non come file).</div>'; });
+  .catch(e=>{ document.querySelector('main').innerHTML='<div class="card">Errore: '+e.message+'</div>'; console.error(e); });
 </script>
 </body>
 </html>

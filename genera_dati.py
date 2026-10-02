@@ -9,15 +9,49 @@ quindi NON e' attiva. Se un giorno si attiva, si aggiorna data.py e si rilancia 
 Uso:  python3 genera_dati.py
 """
 import json
+from datetime import date
 from pathlib import Path
 
 import data as D
 import engine as E
 
 OUT = Path(__file__).parent / "data.json"
+AUTO = Path(__file__).parent / "models_auto.json"
+
+
+def _unisci_modelli():
+    """Base = modelli curati a mano (nomi leggibili, stile Ollama). Gli automatici da HF
+    si aggiungono SOLO se portano un modello nuovo: stessa famiglia con parametri entro
+    il 20% = considerato gia' presente."""
+    uniti = [dict(m) for m in D.MODELS]
+    auto, aggiornato = [], None
+    if AUTO.exists():
+        blob = json.loads(AUTO.read_text(encoding="utf-8"))
+        auto = blob.get("modelli", [])
+        aggiornato = (blob.get("generato") or "")[:10]
+
+    def fam(m):
+        f = (m.get("family") or "").lower()
+        return "mistral" if f == "mixtral" else f
+
+    def presente(m):
+        # tolleranza simmetrica: l'automatico ricava i parametri dal nome (2B), il curato
+        # li ha reali (2,61B). Confronto sul maggiore dei due.
+        return any(fam(x) == fam(m)
+                   and abs(x["params"] - m["params"]) <= 0.35 * max(x["params"], m["params"], 1)
+                   for x in uniti)
+
+    n_nuovi = 0
+    for m in auto:
+        if not presente(m):
+            uniti.append(m)
+            n_nuovi += 1
+    uniti.sort(key=lambda x: x["params"])
+    return uniti, n_nuovi, aggiornato
 
 
 def main():
+    modelli, n_auto, aggiornato = _unisci_modelli()
     payload = {
         "cpus": sorted(D.CPUS, key=lambda c: c["name"]),
         "gpus": sorted(D.GPUS, key=lambda g: (g["brand"], -g["tput"])),
@@ -25,13 +59,14 @@ def main():
         "ram": D.RAM_TYPES,
         "hd": D.HD_TYPES,
         "quants": D.QUANTS,
-        "models": sorted(D.MODELS, key=lambda m: m["params"]),
+        "models": modelli,
         "efficiency": D.EFFICIENCY,
         "overhead_gb": D.OVERHEAD_GB,
         "use_cases": D.USE_CASES,
         "meta": {
             "nota": "Banda di memoria in GB/s (valori pratici). Token/s = banda/modello*0,65.",
-            "modelli": len(D.MODELS), "cpu": len(D.CPUS), "gpu": len(D.GPUS),
+            "modelli": len(modelli), "cpu": len(D.CPUS), "gpu": len(D.GPUS),
+            "modelli_auto": n_auto, "dati_aggiornati": aggiornato or date.today().isoformat(),
         },
     }
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
