@@ -55,7 +55,8 @@
   <div class="card">
     <div class="griglia">
       <div><label for="cpu">CPU</label><select id="cpu"></select><div class="nota" id="nota-cpu"></div></div>
-      <div><label for="ram">RAM</label><select id="ram"></select><div class="nota">Banda di sistema: conta in CPU-only e con GPU integrate.</div></div>
+      <div><label for="ram">Tipo di RAM</label><select id="ram"></select><div class="nota">Banda di sistema: conta in CPU-only e con GPU integrate.</div></div>
+      <div><label for="ramsize">RAM (quantità)</label><select id="ramsize"></select><div class="nota">Decide se il modello ci sta e quanta RAM può usare la GPU integrata.</div></div>
       <div><label for="gpu">Scheda video (GPU)</label><select id="gpu"></select><div class="nota" id="nota-gpu"></div></div>
       <div><label for="hd">HD / SSD</label><select id="hd"></select><div class="nota">Non cambia i token/s: cambia i tempi di caricamento del modello.</div></div>
       <div><label for="model">Modello</label><select id="model"></select><div class="nota" id="nota-model"></div></div>
@@ -127,6 +128,7 @@ function notaGpu(){
 function calcola(){
   const cpu = D.cpus.find(c=>c.id===$('cpu').value);
   const ram = D.ram.find(r=>r.id===$('ram').value);
+  const ramGb = parseInt($('ramsize').value,10) || 16;
   const hd  = D.hd.find(h=>h.id===$('hd').value);
   const model = D.models.find(m=>m.id===$('model').value);
   const quant = D.quants.find(q=>q.id===$('quant').value);
@@ -137,20 +139,24 @@ function calcola(){
   let banda_vram, vram_disp, gpu_name, igpu = risolviIgpu(cpu);
   if($('gpu').value==='igpu' && igpu){
     gpu_name = igpu.name;
-    vram_disp = igpu.unified ? 999 : igpu.vram;
     banda_vram = cpu.tput * (igpu.unified ? 1.0 : 0.85);
+    // La memoria che la GPU integrata puo' davvero usare dipende dalla RAM installata:
+    // i produttori riservano circa meta' della RAM (min 2 GB), NON tutti i GB massimi.
+    vram_disp = igpu.unified ? ramGb*0.75 : Math.min(igpu.vram, Math.max(2, ramGb/2));
   } else {
     const g = D.gpus.find(x=>x.id===$('gpu').value);
     gpu_name = g.name; vram_disp = g.vram; banda_vram = g.tput;
   }
-  let banda_ram = cpu.tput * (FATT[ram.id]||1);
+  const banda_ram = cpu.tput * (FATT[ram.id]||1);
   const fits = tot_gb <= vram_disp;
+  const fitsRam = tot_gb <= ramGb*0.9;
   const banda = fits ? banda_vram : banda_ram;
-  const tps = banda / tot_gb * EFF;
+  const tps = fitsRam ? banda / tot_gb * EFF : 0;
 
-  const giud = tps<1?'Inutilizzabile':tps<5?'Molto lento':tps<10?'Usabile in chat':tps<20?'Scorrevole':'Molto veloce';
-  const cls = tps<5?'b-bad':tps<10?'b-warn':'b-ok';
-  const dove = $('gpu').value==='igpu' ? 'RAM condivisa' : (fits?'VRAM':'RAM (straripa: lento)');
+  const giud = !fitsRam ? `Non ci sta: ${ramGb} GB di RAM`
+             : tps<1?'Inutilizzabile':tps<5?'Molto lento':tps<10?'Usabile in chat':tps<20?'Scorrevole':'Molto veloce';
+  const cls = (!fitsRam||tps<5)?'b-bad':tps<10?'b-warn':'b-ok';
+  const dove = !fitsRam ? 'non entra' : ($('gpu').value==='igpu' ? 'RAM condivisa' : (fits?'VRAM':'RAM (straripa: lento)'));
   const load = (tot_gb*1024/ (hd.read_mbps||500)).toFixed(1);
 
   const usi = D.use_cases.map(u=>`<span class="${tps>=u.min_tps?'ok':'no'}">${u.name} ${tps>=u.min_tps?'✓':'✗'} (${u.min_tps}+ tok/s)</span>`).join('');
@@ -163,16 +169,19 @@ function calcola(){
       <span class="pill">modello in ${dove}</span>
     </div>
     <div class="banner ${cls}">
-      ${fits
-        ? ($('gpu').value==='igpu' && igpu && !igpu.unified
-            ? '✔ Il modello entra nella memoria condivisa (RAM): per una GPU integrata e gia il massimo.'
-            : '✔ Il modello entra nella memoria della GPU: velocita piena.')
-        : '⚠ Il modello NON entra: straripa e il collo di bottiglia diventa la RAM (molto piu lento).'}
+      ${!fitsRam
+        ? `✗ Il modello non entra nemmeno nella RAM (${ramGb} GB): serve pi&ugrave; memoria, o un modello pi&ugrave; piccolo / pi&ugrave; quantizzato.`
+        : fits
+          ? ($('gpu').value==='igpu' && igpu && !igpu.unified
+              ? '✔ Il modello entra nella memoria condivisa (RAM): per una GPU integrata e gia il massimo.'
+              : '✔ Il modello entra nella memoria della GPU: velocita piena.')
+          : '⚠ Il modello NON entra nella VRAM: straripa e il collo di bottiglia diventa la RAM (molto piu lento).'}
     </div>
     <div class="valori">
       <div>Dimensione modello <b>${peso_gb.toFixed(2)} GB</b></div>
       <div>Con overhead <b>${tot_gb.toFixed(2)} GB</b></div>
-      <div>Memoria GPU disponibile <b>${igpu && $('gpu').value==='igpu' && igpu.unified ? 'condivisa' : vram_disp+' GB'}</b></div>
+      <div>RAM installata <b>${ramGb} GB</b></div>
+      <div>Memoria GPU disponibile <b>${igpu && $('gpu').value==='igpu' && igpu.unified ? (ramGb*0.75).toFixed(1)+' GB (unificata)' : vram_disp+' GB'}</b></div>
       <div>Banda usata <b>${banda.toFixed(0)} GB/s</b></div>
       <div>50 token (una risposta) <b>${tps>0?(50/tps).toFixed(1)+' s':'—'}</b></div>
       <div>Caricamento da ${hd.name.split(' ')[0]} <b>${load} s</b></div>
@@ -202,16 +211,18 @@ function avvia(){
   }
   opt($('cpu'), D.cpus, c=>c.name);
   opt($('ram'), D.ram, r=>r.name);
+  // ram_sizes e' un array di numeri (non oggetti con id): opzioni costruite a mano.
+  $('ramsize').innerHTML = D.ram_sizes.map(g=>`<option value="${g}">${g} GB</option>`).join('');
   opt($('hd'), D.hd, h=>h.name);
   opt($('quant'), D.quants, q=>q.name);
   opt($('model'), D.models, m=>m.name);
   // Default robusto (gli id possono cambiare quando i modelli si aggiornano da soli):
   // Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + un modello ~1.5B in Q4.
   const scegli=(id,v)=>{ const s=$(id); if([...s.options].some(o=>o.value===v)) s.value=v; };
-  scegli('cpu','r5_3500u'); scegli('ram','ddr4'); scegli('hd','nvme3');
+  scegli('cpu','r5_3500u'); scegli('ram','ddr4'); scegli('ramsize','16'); scegli('hd','nvme3');
   scegli('quant','q4km'); scegli('model', modelloDefault());
   popolaGpu();
-  ['cpu','ram','hd','quant','model'].forEach(id=>$(id).addEventListener('change',()=>{
+  ['cpu','ram','ramsize','hd','quant','model'].forEach(id=>$(id).addEventListener('change',()=>{
     if(id==='cpu'){ popolaGpu(); } if(id==='model'){ aggiornaNotaModello(); } calcola();
   }));
   $('gpu').addEventListener('change',()=>{ notaGpu(); calcola(); });

@@ -113,6 +113,10 @@ RAM_TYPES = [
     {"id": "lpddr5","name": "LPDDR5 (saldata)",    "speed": "6400 MT/s"},
 ]
 
+# --- QUANTITA' di RAM (GB). Conta per: memoria condivisa della GPU integrata, VRAM
+#     "unificata" Apple e se il modello ci sta in RAM (CPU-only o straripamento). ---
+RAM_SIZES = [8, 12, 16, 24, 32, 48, 64, 96, 128]
+
 # --- HD / SSD: NON conta per la velocita' token (solo modello e RAM contano).
 #     Conta per i TEMPI DI CARICO (quanto aspetti all'avvio/in cambio modello). ---
 HD_TYPES = [

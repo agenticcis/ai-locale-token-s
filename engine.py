@@ -11,8 +11,18 @@ usa la banda dello strato dove STA il modello: se non entra in VRAM, il collo di
 diventa la RAM.
 """
 
-from data import (CPUS, GPUS, IGPUS, QUANTS, MODELS, RAM_TYPES, HD_TYPES,
+from data import (CPUS, GPUS, IGPUS, QUANTS, MODELS, RAM_TYPES, RAM_SIZES, HD_TYPES,
                   EFFICIENCY, OVERHEAD_GB, USE_CASES)
+
+
+def _vram_integrata(vram_max, ram_gb):
+    """Quanta RAM il sistema riserva davvero come VRAM per una GPU integrata.
+    I produttori danno un minimo (~2 GB) e un massimo, di solito META' della RAM
+    (su 16 GB si riservano ~8 GB, non tutti i 16). Prima si assumevano sempre i GB
+    massimi: era ottimistico e faceva entrare modelli che in pratica straripano."""
+    if ram_gb <= 0:
+        return vram_max
+    return min(vram_max, max(2.0, ram_gb / 2.0))
 
 
 def _trova(seq, id_):
@@ -70,7 +80,7 @@ def opzioni_modelli():
              "family": m["family"]} for m in sorted(MODELS, key=lambda m: m["params"])]
 
 
-def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
+def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id, ram_gb=16):
     cpu = _trova(CPUS, cpu_id)
     ram = _trova(RAM_TYPES, ram_id)
     hd = _trova(HD_TYPES, hd_id)
@@ -86,14 +96,16 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
     # 2) dove sta il modello: VRAM o RAM?
     if gpu_id == "igpu":
         igpu = _risolvi_igpu(cpu.get("igpu"))
-        vram = igpu["vram"]
         unified = igpu.get("unified", False)
         gpu_name = igpu["name"]
         # una iGPU non-Apple usa la banda della RAM di sistema (- penalty per condivisione)
-        banda_vram = (cpu["tput"] if not unified else cpu["tput"]) * 0.85 if not unified else cpu["tput"]
+        banda_vram = cpu["tput"] * (1.0 if unified else 0.85)
         if unified:
-            vram = 0  # usa tutta la RAM come memoria condivisa (limitata dal taglio RAM)
-        vram_disp = vram
+            # Apple: memoria unificata, la GPU puo' usare ~75% della RAM installata
+            vram_disp = ram_gb * 0.75
+        else:
+            # iGPU su RAM di sistema: riserva ~meta' della RAM, entro il suo massimo
+            vram_disp = _vram_integrata(igpu["vram"], ram_gb)
     else:
         g = _trova(GPUS, gpu_id)
         gpu_name = g["name"]
@@ -107,13 +119,10 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
     banda_ram *= fattore_ram
 
     # 3) entra in VRAM?
-    # Per Apple unificata: la VRAM e' una porzione del taglio RAM (default ~70%).
-    if gpu_id == "igpu" and _risolvi_igpu(cpu.get("igpu")).get("unified"):
-        # memoria condivisa: la GPU prende ~70% della RAM disponibile per i pesi
-        vram_disp = {"ddr3": 8, "ddr4": 16, "ddr5": 32, "lpddr5": 32}.get(ram["id"], 16)
-        vram_disp *= 0.7
-
     fits = tot_gb <= vram_disp
+    # 3b) entra in RAM? Senza questo, una macchina con poca RAM "farebbe girare" modelli
+    #     che in pratica non ci stanno.
+    fits_ram = tot_gb <= ram_gb * 0.9
 
     # 4) banda usata
     if fits:
@@ -123,6 +132,8 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
         banda = banda_ram
 
     tps = banda / tot_gb * EFFICIENCY
+    if not fits_ram:
+        tps = 0.0   # non ci sta: niente token/s onesti da mostrare
 
     # 5) tempi di carico (SSD/HD) e di prefill (prompt)
     load_s = (tot_gb * 1024) / hd["read_mbps"]
@@ -132,7 +143,9 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
     usi = []
     for u in USE_CASES:
         usi.append({"name": u["name"], "ok": tps >= u["min_tps"], "min": u["min_tps"]})
-    if tps < 1:
+    if not fits_ram:
+        giudizio = f"Non ci sta: {ram_gb} GB di RAM"
+    elif tps < 1:
         giudizio = "Inutilizzabile"
     elif tps < 5:
         giudizio = "Molto lento"
@@ -144,10 +157,11 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id):
         giudizio = "Molto veloce"
 
     return {
-        "cpu": cpu["name"], "gpu": gpu_name, "ram": ram["name"], "hd": hd["name"],
+        "cpu": cpu["name"], "gpu": gpu_name, "ram": ram["name"], "ram_gb": ram_gb,
+        "hd": hd["name"],
         "model": model["name"], "quant": quant["name"],
         "peso_gb": round(peso_gb, 2), "tot_gb": round(tot_gb, 2),
-        "vram_disp": round(vram_disp, 1), "fits": fits,
+        "vram_disp": round(vram_disp, 1), "fits": fits, "fits_ram": fits_ram,
         "banda": round(banda, 0), "tps": round(tps, 1),
         "tps_basso": round(tps * 0.6, 1), "tps_alto": round(tps * 1.3, 1),
         "secondi_50tok": round(50 / tps, 1) if tps > 0 else None,

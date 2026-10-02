@@ -57,6 +57,7 @@ def main():
         "gpus": sorted(D.GPUS, key=lambda g: (g["brand"], -g["tput"])),
         "igpus": D.IGPUS,
         "ram": D.RAM_TYPES,
+        "ram_sizes": D.RAM_SIZES,
         "hd": D.HD_TYPES,
         "quants": D.QUANTS,
         "models": modelli,
