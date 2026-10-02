@@ -118,10 +118,12 @@ function notaGpu(){
     $('nota-gpu').classList.add('ok-nota');
     $('nota-gpu').textContent = ig.unified
       ? `Abbinata a ${cpu.name}: memoria unificata, la GPU usa la RAM di sistema.`
-      : `Abbinata automaticamente a ${cpu.name}: usa la RAM di sistema (${ig.vram} GB riservabili).`;
+      : `Abbinata automaticamente a ${cpu.name}: usa la RAM di sistema (fino a ~75% della RAM installata).`;
   } else {
     $('nota-gpu').classList.remove('ok-nota');
-    $('nota-gpu').textContent = 'GPU discreta scelta a mano: se il modello ci entra, va molto piu veloce.';
+    $('nota-gpu').textContent = ig
+      ? 'GPU discreta scelta a mano: se il modello ci entra, va molto piu veloce.'
+      : 'Questa CPU non ha una GPU integrata: il modello gira sulla CPU, usando la banda della RAM di sistema.';
   }
 }
 
@@ -136,18 +138,25 @@ function calcola(){
   const peso_gb = model.params * quant.bpw / 8;
   const tot_gb = peso_gb + OVERHEAD;
 
+  // Il tipo di RAM decide la BANDA (velocita'); la quantita' decide solo la CAPACITA'.
+  // Apple: il tput E' gia' la banda della memoria unificata, niente doppio moltiplicatore.
+  const banda_sistema = cpu.tput * (cpu.igpu==='unified' ? 1 : (FATT[ram.id]||1));
   let banda_vram, vram_disp, gpu_name, igpu = risolviIgpu(cpu);
   if($('gpu').value==='igpu' && igpu){
     gpu_name = igpu.name;
-    banda_vram = cpu.tput * (igpu.unified ? 1.0 : 0.85);
+    banda_vram = banda_sistema * (igpu.unified ? 1.0 : 0.85);
     // GPU integrata (Apple e non): memoria CONDIVISA col sistema, non dedicata.
     // Puo' usare ~75% della RAM installata (il resto serve a OS e contesto del modello).
     vram_disp = ramGb*0.75;
+  } else if($('gpu').value==='igpu'){
+    // CPU senza GPU integrata: inferenza su CPU, banda di sistema, memoria condivisa.
+    gpu_name = 'CPU (nessuna GPU integrata)';
+    banda_vram = banda_sistema; vram_disp = ramGb*0.75;
   } else {
     const g = D.gpus.find(x=>x.id===$('gpu').value);
     gpu_name = g.name; vram_disp = g.vram; banda_vram = g.tput;
   }
-  const banda_ram = cpu.tput * (FATT[ram.id]||1);
+  const banda_ram = banda_sistema;
   const isIgpu = $('gpu').value==='igpu' && !!igpu;
   const fits = tot_gb <= vram_disp;
   const fitsRam = tot_gb <= ramGb*0.9;

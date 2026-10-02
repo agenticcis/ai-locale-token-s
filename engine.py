@@ -40,7 +40,7 @@ def opzioni_cpu():
 
 
 def opzioni_gpu(cpu_id):
-    """GPU scegliibili: integrate (dalla CPU) + discrete. La scelta decide la banda."""
+    """GPU scegliibili: integrate (SOLO se la CPU ne ha una) + discrete."""
     out = []
     cpu = _trova(CPUS, cpu_id)
     ig = _risolvi_igpu(cpu.get("igpu"))
@@ -84,26 +84,38 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id, ram_gb=16):
     tot_gb = peso_gb + OVERHEAD_GB
 
     # 2) dove sta il modello: VRAM o RAM?
+    # Il tipo di RAM sceglie la BANDA (velocita'); la quantita' sceglie solo la CAPACITA'.
+    # Mai far dipendere la banda dalla capacita': sarebbe un'illusione (64 GB non velocizzano
+    # una macchina lenta). Il "tput" della CPU e' gia' la banda reale della sua RAM tipica;
+    # il tipo di RAM scelto la scala se molto piu' lenta/veloce.
+    fattore_ram = {"ddr3": 0.55, "ddr4": 1.0, "ddr5": 1.25, "lpddr5": 1.2}.get(ram["id"], 1.0)
+    if cpu.get("igpu") == "unified":
+        # Apple: il "tput" E' gia' la banda reale della memoria unificata (LPDDR5 saldata).
+        # Moltiplicarla di nuovo doppierebbe un guadagno che non esiste.
+        fattore_ram = 1.0
+    banda_sistema = cpu["tput"] * fattore_ram
+
     if gpu_id == "igpu":
         igpu = _risolvi_igpu(cpu.get("igpu"))
-        unified = igpu.get("unified", False)
-        gpu_name = igpu["name"]
-        # una iGPU non-Apple usa la banda della RAM di sistema (- penalty per condivisione)
-        banda_vram = cpu["tput"] * (1.0 if unified else 0.85)
-        # Integrate Apple E non-Apple: memoria CONDIVISA con il sistema, non dedicata.
-        # La GPU puo' usare ~75% della RAM installata (il resto serve a OS e contesto).
-        vram_disp = ram_gb * 0.75
+        if igpu:
+            unified = igpu.get("unified", False)
+            gpu_name = igpu["name"]
+            # iGPU (Apple o Intel/AMD/Qualcomm) = memoria condivisa, ~75% della RAM installata.
+            banda_vram = banda_sistema * (1.0 if unified else 0.85)
+            vram_disp = ram_gb * 0.75
+        else:
+            # CPU senza GPU integrata: inferenza sulla CPU, banda = RAM di sistema.
+            gpu_name = f"{cpu['name']} (nessuna GPU: inferenza su CPU)"
+            banda_vram = banda_sistema
+            vram_disp = ram_gb * 0.75
     else:
+        # GPU discreta: VRAM dedicata, indipendente dalla quantita' di RAM di sistema.
         g = _trova(GPUS, gpu_id)
         gpu_name = g["name"]
         vram_disp = g["vram"]
         banda_vram = g["tput"]
 
-    banda_ram = cpu["tput"]
-    # correzione RAM/DDR: il "tput CPU" e' gia' la banda reale della sua RAM tipica.
-    # Se l'utente sceglie una RAM molto piu' lenta/veloce, scaliamo ~ proporzionalmente.
-    fattore_ram = {"ddr3": 0.55, "ddr4": 1.0, "ddr5": 1.25, "lpddr5": 1.2}.get(ram["id"], 1.0)
-    banda_ram *= fattore_ram
+    banda_ram = banda_sistema
 
     # 3) entra in VRAM?
     fits = tot_gb <= vram_disp
