@@ -66,8 +66,10 @@ def opzioni_quant():
 
 
 def opzioni_modelli():
+    """Modelli in ordine alfabetico. 'auto' = trovato automaticamente (nome meno curato)."""
     return [{"id": m["id"], "name": m["name"], "params": m["params"],
-             "family": m["family"]} for m in sorted(MODELS, key=lambda m: m["params"])]
+             "family": m["family"], "auto": bool(m.get("auto"))}
+            for m in sorted(MODELS, key=lambda m: m["name"].lower())]
 
 
 def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id, ram_gb=16):

@@ -773,27 +773,27 @@
  "quants": [
   {
    "id": "q3km",
-   "name": "Q3_K_M (~3,9 bit)",
+   "name": "Q3_K_M (3,9 bit per peso)",
    "bpw": 3.9
   },
   {
    "id": "q4km",
-   "name": "Q4_K_M (~4,9 bit)",
+   "name": "Q4_K_M (4,9 bit per peso)",
    "bpw": 4.85
   },
   {
    "id": "q5km",
-   "name": "Q5_K_M (~5,7 bit)",
+   "name": "Q5_K_M (5,7 bit per peso)",
    "bpw": 5.7
   },
   {
    "id": "q6k",
-   "name": "Q6_K (~6,6 bit)",
+   "name": "Q6_K (6,6 bit per peso)",
    "bpw": 6.6
   },
   {
    "id": "q8",
-   "name": "Q8_0 (~8,5 bit)",
+   "name": "Q8_0 (8,5 bit per peso)",
    "bpw": 8.5
   },
   {
@@ -804,38 +804,117 @@
  ],
  "models": [
   {
-   "id": "smollm2_135m",
-   "name": "SmolLM2 135M",
-   "params": 0.135,
-   "family": "SmolLM"
+   "id": "codellama_13b",
+   "name": "Code Llama 13B",
+   "params": 13.0,
+   "family": "Llama",
+   "auto": false
   },
   {
-   "id": "smollm2_360m",
-   "name": "SmolLM2 360M",
-   "params": 0.36,
-   "family": "SmolLM"
+   "id": "codellama_7b",
+   "name": "Code Llama 7B",
+   "params": 6.74,
+   "family": "Llama",
+   "auto": false
   },
   {
-   "id": "qwen25_05b",
-   "name": "Qwen2.5 0.5B",
-   "params": 0.5,
-   "family": "Qwen"
+   "id": "command_r_35b",
+   "name": "Command R 35B",
+   "params": 35.0,
+   "family": "Cohere",
+   "auto": false
   },
   {
-   "id": "qwen3_06b",
-   "name": "Qwen3 0.6B",
-   "params": 0.6,
-   "family": "Qwen"
+   "id": "command_r7b",
+   "name": "Command R7B",
+   "params": 7.6,
+   "family": "Cohere",
+   "auto": false
   },
   {
-   "id": "gnlolot_minicpm5_1b_claude_opus_fable5_v2_thinking_gguf",
-   "name": "MiniCPM5 1B",
-   "params": 1.0,
-   "family": "Minicpm",
-   "active": null,
-   "aggiornato": "2026-07-13",
-   "downloads": 274291,
-   "fonte": "GnLOLot/MiniCPM5-1B-Claude-Opus-Fable5-V2-Thinking-GGUF"
+   "id": "deepseek_coder16b",
+   "name": "DeepSeek-Coder-V2 Lite 16B (MoE)",
+   "params": 15.7,
+   "family": "DeepSeek",
+   "active": 2.4,
+   "auto": false
+  },
+  {
+   "id": "deepseek_r1_15b",
+   "name": "DeepSeek-R1 1.5B",
+   "params": 1.78,
+   "family": "DeepSeek",
+   "auto": false
+  },
+  {
+   "id": "deepseek_r1_14b",
+   "name": "DeepSeek-R1 14B",
+   "params": 14.8,
+   "family": "DeepSeek",
+   "auto": false
+  },
+  {
+   "id": "deepseek_r1_32b",
+   "name": "DeepSeek-R1 32B",
+   "params": 32.8,
+   "family": "DeepSeek",
+   "auto": false
+  },
+  {
+   "id": "deepseek_r1_7b",
+   "name": "DeepSeek-R1 7B",
+   "params": 7.62,
+   "family": "DeepSeek",
+   "auto": false
+  },
+  {
+   "id": "deepseek_r1_8b",
+   "name": "DeepSeek-R1 8B",
+   "params": 8.03,
+   "family": "DeepSeek",
+   "auto": false
+  },
+  {
+   "id": "exaone3_5_32b",
+   "name": "EXAONE 3.5 32B",
+   "params": 32.0,
+   "family": "EXAONE",
+   "auto": false
+  },
+  {
+   "id": "falcon3_10b",
+   "name": "Falcon3 10B",
+   "params": 10.0,
+   "family": "Falcon",
+   "auto": false
+  },
+  {
+   "id": "gemma2_27b",
+   "name": "Gemma 2 27B",
+   "params": 27.2,
+   "family": "Gemma",
+   "auto": false
+  },
+  {
+   "id": "gemma2_2b",
+   "name": "Gemma 2 2B",
+   "params": 2.61,
+   "family": "Gemma",
+   "auto": false
+  },
+  {
+   "id": "gemma2_9b",
+   "name": "Gemma 2 9B",
+   "params": 9.24,
+   "family": "Gemma",
+   "auto": false
+  },
+  {
+   "id": "gemma3_12b",
+   "name": "Gemma 3 12B",
+   "params": 12.2,
+   "family": "Gemma",
+   "auto": false
   },
   {
    "id": "maziyarpanahi_gemma_3_1b_it_gguf",
@@ -845,270 +924,22 @@
    "active": null,
    "aggiornato": "2025-03-12",
    "downloads": 146307,
-   "fonte": "MaziyarPanahi/gemma-3-1b-it-GGUF"
+   "fonte": "MaziyarPanahi/gemma-3-1b-it-GGUF",
+   "auto": true
   },
   {
-   "id": "tinyllama",
-   "name": "TinyLlama 1.1B",
-   "params": 1.1,
-   "family": "Llama"
+   "id": "gemma3_27b",
+   "name": "Gemma 3 27B",
+   "params": 27.4,
+   "family": "Gemma",
+   "auto": false
   },
   {
-   "id": "llama32_1b",
-   "name": "Llama 3.2 1B",
-   "params": 1.24,
-   "family": "Llama"
-  },
-  {
-   "id": "qwen25_15b",
-   "name": "Qwen2.5 1.5B",
-   "params": 1.5,
-   "family": "Qwen"
-  },
-  {
-   "id": "maziyarpanahi_yi_coder_1_5b_chat_gguf",
-   "name": "Yi Coder 1.5B",
-   "params": 1.5,
-   "family": "Yi",
-   "active": null,
-   "aggiornato": "2024-09-04",
-   "downloads": 165224,
-   "fonte": "MaziyarPanahi/Yi-Coder-1.5B-Chat-GGUF"
-  },
-  {
-   "id": "qwen3_17b",
-   "name": "Qwen3 1.7B",
-   "params": 1.7,
-   "family": "Qwen"
-  },
-  {
-   "id": "deepseek_r1_15b",
-   "name": "DeepSeek-R1 1.5B",
-   "params": 1.78,
-   "family": "DeepSeek"
-  },
-  {
-   "id": "openbmb_minicpm5_2b_gguf",
-   "name": "MiniCPM5 2B",
-   "params": 2.0,
-   "family": "Minicpm",
-   "active": null,
-   "aggiornato": "2026-09-12",
-   "downloads": 260224,
-   "fonte": "openbmb/MiniCPM5-2B-GGUF"
-  },
-  {
-   "id": "gemma2_2b",
-   "name": "Gemma 2 2B",
-   "params": 2.61,
-   "family": "Gemma"
-  },
-  {
-   "id": "ankitai_parable_granite_4_1_3b_claude_fable_5_gguf",
-   "name": "Parable Granite 4.1 3B",
-   "params": 3.0,
-   "family": "Granite",
-   "active": null,
-   "aggiornato": "2026-09-22",
-   "downloads": 265881,
-   "fonte": "AnkitAI/Parable-Granite-4.1-3B-Claude-Fable-5-GGUF"
-  },
-  {
-   "id": "bartowski_huggingfacetb_smollm3_3b_gguf",
-   "name": "HuggingFaceTB SmolLM3 3B",
-   "params": 3.0,
-   "family": "Smollm",
-   "active": null,
-   "aggiornato": "2025-07-10",
-   "downloads": 30347,
-   "fonte": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF"
-  },
-  {
-   "id": "qwen25_3b",
-   "name": "Qwen2.5 3B",
-   "params": 3.1,
-   "family": "Qwen"
-  },
-  {
-   "id": "llama32_3b",
-   "name": "Llama 3.2 3B",
-   "params": 3.21,
-   "family": "Llama"
-  },
-  {
-   "id": "phi3_mini",
-   "name": "Phi-3 Mini 3.8B",
-   "params": 3.82,
-   "family": "Phi"
-  },
-  {
-   "id": "qwen3_4b",
-   "name": "Qwen3 4B",
-   "params": 4.0,
-   "family": "Qwen"
-  },
-  {
-   "id": "zai_org_glm_edge_4b_chat_gguf",
-   "name": "GLM Edge 4B",
-   "params": 4.0,
-   "family": "Glm",
-   "active": null,
-   "aggiornato": "2024-11-28",
-   "downloads": 35152,
-   "fonte": "zai-org/glm-edge-4b-chat-gguf"
-  },
-  {
-   "id": "maziyarpanahi_yi_1_5_6b_chat_gguf",
-   "name": "Yi 1.5 6B",
-   "params": 6.0,
-   "family": "Yi",
-   "active": null,
-   "aggiornato": "2024-05-12",
-   "downloads": 145358,
-   "fonte": "MaziyarPanahi/Yi-1.5-6B-Chat-GGUF"
-  },
-  {
-   "id": "codellama_7b",
-   "name": "Code Llama 7B",
-   "params": 6.74,
-   "family": "Llama"
-  },
-  {
-   "id": "mistral_7b",
-   "name": "Mistral 7B",
-   "params": 7.24,
-   "family": "Mistral"
-  },
-  {
-   "id": "openchat_7b",
-   "name": "OpenChat 7B",
-   "params": 7.24,
-   "family": "Mistral"
-  },
-  {
-   "id": "qwen25_7b",
-   "name": "Qwen2.5 7B",
-   "params": 7.6,
-   "family": "Qwen"
-  },
-  {
-   "id": "qwen25_coder7b",
-   "name": "Qwen2.5-Coder 7B",
-   "params": 7.6,
-   "family": "Qwen"
-  },
-  {
-   "id": "deepseek_r1_7b",
-   "name": "DeepSeek-R1 7B",
-   "params": 7.62,
-   "family": "DeepSeek"
-  },
-  {
-   "id": "qwen3_8b",
-   "name": "Qwen3 8B",
-   "params": 8.0,
-   "family": "Qwen"
-  },
-  {
-   "id": "ankitai_parable_granite_4_1_8b_claude_fable_5_gguf",
-   "name": "Parable Granite 4.1 8B",
-   "params": 8.0,
-   "family": "Granite",
-   "active": null,
-   "aggiornato": "2026-09-22",
-   "downloads": 262895,
-   "fonte": "AnkitAI/Parable-Granite-4.1-8B-Claude-Fable-5-GGUF"
-  },
-  {
-   "id": "llama31_8b",
-   "name": "Llama 3.1 8B",
-   "params": 8.03,
-   "family": "Llama"
-  },
-  {
-   "id": "deepseek_r1_8b",
-   "name": "DeepSeek-R1 8B",
-   "params": 8.03,
-   "family": "DeepSeek"
-  },
-  {
-   "id": "legraphista_glm_4_9b_chat_imat_gguf",
-   "name": "GLM 4 9B IMat",
-   "params": 9.0,
-   "family": "Glm",
-   "active": null,
-   "aggiornato": "2024-06-20",
-   "downloads": 200057,
-   "fonte": "legraphista/glm-4-9b-chat-IMat-GGUF"
-  },
-  {
-   "id": "gemma2_9b",
-   "name": "Gemma 2 9B",
-   "params": 9.24,
-   "family": "Gemma"
-  },
-  {
-   "id": "codellama_13b",
-   "name": "Code Llama 13B",
-   "params": 13.0,
-   "family": "Llama"
-  },
-  {
-   "id": "vicuna_13b",
-   "name": "Vicuna 13B",
-   "params": 13.0,
-   "family": "Llama"
-  },
-  {
-   "id": "phi3_med",
-   "name": "Phi-3 Medium 14B",
-   "params": 14.0,
-   "family": "Phi"
-  },
-  {
-   "id": "bartowski_nousresearch_hermes_4_14b_gguf",
-   "name": "NousResearch Hermes 4 14B",
-   "params": 14.0,
-   "family": "Hermes",
-   "active": null,
-   "aggiornato": "2025-09-03",
-   "downloads": 37493,
-   "fonte": "bartowski/NousResearch_Hermes-4-14B-GGUF"
-  },
-  {
-   "id": "qwen25_14b",
-   "name": "Qwen2.5 14B",
-   "params": 14.7,
-   "family": "Qwen"
-  },
-  {
-   "id": "phi4_14b",
-   "name": "Phi-4 14B",
-   "params": 14.7,
-   "family": "Phi"
-  },
-  {
-   "id": "deepseek_r1_14b",
-   "name": "DeepSeek-R1 14B",
-   "params": 14.8,
-   "family": "DeepSeek"
-  },
-  {
-   "id": "deepseek_coder16b",
-   "name": "DeepSeek-Coder-V2 Lite 16B (MoE)",
-   "params": 15.7,
-   "family": "DeepSeek",
-   "active": 2.4
-  },
-  {
-   "id": "unsloth_gpt_oss_20b_gguf",
-   "name": "GPT OSS 20B",
-   "params": 20.0,
-   "family": "Gpt-oss",
-   "active": null,
-   "aggiornato": "2025-12-19",
-   "downloads": 490693,
-   "fonte": "unsloth/gpt-oss-20b-GGUF"
+   "id": "gemma3_4b",
+   "name": "Gemma 3 4B",
+   "params": 4.3,
+   "family": "Gemma",
+   "auto": false
   },
   {
    "id": "unsloth_glm_4_7_flash_reap_23b_a3b_gguf",
@@ -1118,64 +949,26 @@
    "active": 3.0,
    "aggiornato": "2026-01-28",
    "downloads": 31717,
-   "fonte": "unsloth/GLM-4.7-Flash-REAP-23B-A3B-GGUF"
+   "fonte": "unsloth/GLM-4.7-Flash-REAP-23B-A3B-GGUF",
+   "auto": true
   },
   {
-   "id": "maziyarpanahi_mistral_small_24b_instruct_2501_gguf",
-   "name": "Mistral Small 24B",
-   "params": 24.0,
-   "family": "Mistral",
+   "id": "zai_org_glm_edge_4b_chat_gguf",
+   "name": "GLM Edge 4B",
+   "params": 4.0,
+   "family": "Glm",
    "active": null,
-   "aggiornato": "2025-06-23",
-   "downloads": 151281,
-   "fonte": "MaziyarPanahi/Mistral-Small-24B-Instruct-2501-GGUF"
+   "aggiornato": "2024-11-28",
+   "downloads": 35152,
+   "fonte": "zai-org/glm-edge-4b-chat-gguf",
+   "auto": true
   },
   {
-   "id": "gemma2_27b",
-   "name": "Gemma 2 27B",
-   "params": 27.2,
-   "family": "Gemma"
-  },
-  {
-   "id": "qwen25_32b",
-   "name": "Qwen2.5 32B",
-   "params": 32.5,
-   "family": "Qwen"
-  },
-  {
-   "id": "deepseek_r1_32b",
-   "name": "DeepSeek-R1 32B",
-   "params": 32.8,
-   "family": "DeepSeek"
-  },
-  {
-   "id": "yi_34b",
-   "name": "Yi 34B",
-   "params": 34.4,
-   "family": "Yi"
-  },
-  {
-   "id": "mixtral_8x7b",
-   "name": "Mixtral 8x7B (MoE)",
-   "params": 46.7,
-   "family": "Mistral",
-   "active": 12.9
-  },
-  {
-   "id": "llama33_70b",
-   "name": "Llama 3.3 70B",
-   "params": 70.6,
-   "family": "Llama"
-  },
-  {
-   "id": "bartowski_qwen2_5_72b_instruct_gguf",
-   "name": "Qwen2.5 72B",
-   "params": 72.0,
-   "family": "Qwen",
-   "active": null,
-   "aggiornato": "2024-09-19",
-   "downloads": 72741,
-   "fonte": "bartowski/Qwen2.5-72B-Instruct-GGUF"
+   "id": "glm4_9b",
+   "name": "GLM-4 9B",
+   "params": 9.4,
+   "family": "GLM",
+   "auto": false
   },
   {
    "id": "ggml_org_gpt_oss_120b_gguf",
@@ -1185,14 +978,400 @@
    "active": null,
    "aggiornato": "2026-07-28",
    "downloads": 152577,
-   "fonte": "ggml-org/gpt-oss-120b-GGUF"
+   "fonte": "ggml-org/gpt-oss-120b-GGUF",
+   "auto": true
+  },
+  {
+   "id": "unsloth_gpt_oss_20b_gguf",
+   "name": "GPT OSS 20B",
+   "params": 20.0,
+   "family": "Gpt-oss",
+   "active": null,
+   "aggiornato": "2025-12-19",
+   "downloads": 490693,
+   "fonte": "unsloth/gpt-oss-20b-GGUF",
+   "auto": true
+  },
+  {
+   "id": "granite32_8b",
+   "name": "Granite 3.2 8B",
+   "params": 8.2,
+   "family": "Granite",
+   "auto": false
+  },
+  {
+   "id": "granite33_8b",
+   "name": "Granite 3.3 8B",
+   "params": 8.2,
+   "family": "Granite",
+   "auto": false
+  },
+  {
+   "id": "hermes3_8b",
+   "name": "Hermes 3 8B",
+   "params": 8.03,
+   "family": "Hermes",
+   "auto": false
+  },
+  {
+   "id": "bartowski_huggingfacetb_smollm3_3b_gguf",
+   "name": "HuggingFaceTB SmolLM3 3B",
+   "params": 3.0,
+   "family": "Smollm",
+   "active": null,
+   "aggiornato": "2025-07-10",
+   "downloads": 30347,
+   "fonte": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
+   "auto": true
+  },
+  {
+   "id": "llama31_405b",
+   "name": "Llama 3.1 405B",
+   "params": 405.0,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "llama31_70b",
+   "name": "Llama 3.1 70B",
+   "params": 70.6,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "llama31_8b",
+   "name": "Llama 3.1 8B",
+   "params": 8.03,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "llama32_1b",
+   "name": "Llama 3.2 1B",
+   "params": 1.24,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "llama32_3b",
+   "name": "Llama 3.2 3B",
+   "params": 3.21,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "llama33_70b",
+   "name": "Llama 3.3 70B",
+   "params": 70.6,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "gnlolot_minicpm5_1b_claude_opus_fable5_v2_thinking_gguf",
+   "name": "MiniCPM5 1B",
+   "params": 1.0,
+   "family": "Minicpm",
+   "active": null,
+   "aggiornato": "2026-07-13",
+   "downloads": 274291,
+   "fonte": "GnLOLot/MiniCPM5-1B-Claude-Opus-Fable5-V2-Thinking-GGUF",
+   "auto": true
+  },
+  {
+   "id": "openbmb_minicpm5_2b_gguf",
+   "name": "MiniCPM5 2B",
+   "params": 2.0,
+   "family": "Minicpm",
+   "active": null,
+   "aggiornato": "2026-09-12",
+   "downloads": 260224,
+   "fonte": "openbmb/MiniCPM5-2B-GGUF",
+   "auto": true
+  },
+  {
+   "id": "mistral_7b",
+   "name": "Mistral 7B",
+   "params": 7.24,
+   "family": "Mistral",
+   "auto": false
+  },
+  {
+   "id": "maziyarpanahi_mistral_small_24b_instruct_2501_gguf",
+   "name": "Mistral Small 24B",
+   "params": 24.0,
+   "family": "Mistral",
+   "active": null,
+   "aggiornato": "2025-06-23",
+   "downloads": 151281,
+   "fonte": "MaziyarPanahi/Mistral-Small-24B-Instruct-2501-GGUF",
+   "auto": true
   },
   {
    "id": "mixtral_8x22b",
    "name": "Mixtral 8x22B (MoE)",
    "params": 141.0,
    "family": "Mistral",
-   "active": 39.0
+   "active": 39.0,
+   "auto": false
+  },
+  {
+   "id": "mixtral_8x7b",
+   "name": "Mixtral 8x7B (MoE)",
+   "params": 46.7,
+   "family": "Mistral",
+   "active": 12.9,
+   "auto": false
+  },
+  {
+   "id": "nemotron_8b",
+   "name": "Nemotron 8B",
+   "params": 8.5,
+   "family": "Nemotron",
+   "auto": false
+  },
+  {
+   "id": "bartowski_nousresearch_hermes_4_14b_gguf",
+   "name": "NousResearch Hermes 4 14B",
+   "params": 14.0,
+   "family": "Hermes",
+   "active": null,
+   "aggiornato": "2025-09-03",
+   "downloads": 37493,
+   "fonte": "bartowski/NousResearch_Hermes-4-14B-GGUF",
+   "auto": true
+  },
+  {
+   "id": "olmo2_13b",
+   "name": "OLMo 2 13B",
+   "params": 13.0,
+   "family": "OLMo",
+   "auto": false
+  },
+  {
+   "id": "olmo2_7b",
+   "name": "OLMo 2 7B",
+   "params": 7.0,
+   "family": "OLMo",
+   "auto": false
+  },
+  {
+   "id": "openchat_7b",
+   "name": "OpenChat 7B",
+   "params": 7.24,
+   "family": "Mistral",
+   "auto": false
+  },
+  {
+   "id": "ankitai_parable_granite_4_1_3b_claude_fable_5_gguf",
+   "name": "Parable Granite 4.1 3B",
+   "params": 3.0,
+   "family": "Granite",
+   "active": null,
+   "aggiornato": "2026-09-22",
+   "downloads": 265881,
+   "fonte": "AnkitAI/Parable-Granite-4.1-3B-Claude-Fable-5-GGUF",
+   "auto": true
+  },
+  {
+   "id": "phi3_med",
+   "name": "Phi-3 Medium 14B",
+   "params": 14.0,
+   "family": "Phi",
+   "auto": false
+  },
+  {
+   "id": "phi3_mini",
+   "name": "Phi-3 Mini 3.8B",
+   "params": 3.82,
+   "family": "Phi",
+   "auto": false
+  },
+  {
+   "id": "phi4_14b",
+   "name": "Phi-4 14B",
+   "params": 14.7,
+   "family": "Phi",
+   "auto": false
+  },
+  {
+   "id": "phi4_mini",
+   "name": "Phi-4 Mini 3.8B",
+   "params": 3.8,
+   "family": "Phi",
+   "auto": false
+  },
+  {
+   "id": "qwen25_05b",
+   "name": "Qwen2.5 0.5B",
+   "params": 0.5,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25_15b",
+   "name": "Qwen2.5 1.5B",
+   "params": 1.5,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25_14b",
+   "name": "Qwen2.5 14B",
+   "params": 14.7,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25_32b",
+   "name": "Qwen2.5 32B",
+   "params": 32.5,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25_3b",
+   "name": "Qwen2.5 3B",
+   "params": 3.1,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "bartowski_qwen2_5_72b_instruct_gguf",
+   "name": "Qwen2.5 72B",
+   "params": 72.0,
+   "family": "Qwen",
+   "active": null,
+   "aggiornato": "2024-09-19",
+   "downloads": 72741,
+   "fonte": "bartowski/Qwen2.5-72B-Instruct-GGUF",
+   "auto": true
+  },
+  {
+   "id": "qwen25_7b",
+   "name": "Qwen2.5 7B",
+   "params": 7.6,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25coder14b",
+   "name": "Qwen2.5-Coder 14B",
+   "params": 14.7,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25coder32b",
+   "name": "Qwen2.5-Coder 32B",
+   "params": 32.5,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen25_coder7b",
+   "name": "Qwen2.5-Coder 7B",
+   "params": 7.6,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen3_06b",
+   "name": "Qwen3 0.6B",
+   "params": 0.6,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen3_17b",
+   "name": "Qwen3 1.7B",
+   "params": 1.7,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen3_4b",
+   "name": "Qwen3 4B",
+   "params": 4.0,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwen3_8b",
+   "name": "Qwen3 8B",
+   "params": 8.0,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "qwq_32b",
+   "name": "QwQ 32B",
+   "params": 32.8,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "smallthinker_3b",
+   "name": "SmallThinker 3B",
+   "params": 3.0,
+   "family": "Qwen",
+   "auto": false
+  },
+  {
+   "id": "smollm2_135m",
+   "name": "SmolLM2 135M",
+   "params": 0.135,
+   "family": "SmolLM",
+   "auto": false
+  },
+  {
+   "id": "smollm2_360m",
+   "name": "SmolLM2 360M",
+   "params": 0.36,
+   "family": "SmolLM",
+   "auto": false
+  },
+  {
+   "id": "tinyllama",
+   "name": "TinyLlama 1.1B",
+   "params": 1.1,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "vicuna_13b",
+   "name": "Vicuna 13B",
+   "params": 13.0,
+   "family": "Llama",
+   "auto": false
+  },
+  {
+   "id": "maziyarpanahi_yi_1_5_6b_chat_gguf",
+   "name": "Yi 1.5 6B",
+   "params": 6.0,
+   "family": "Yi",
+   "active": null,
+   "aggiornato": "2024-05-12",
+   "downloads": 145358,
+   "fonte": "MaziyarPanahi/Yi-1.5-6B-Chat-GGUF",
+   "auto": true
+  },
+  {
+   "id": "yi_34b",
+   "name": "Yi 34B",
+   "params": 34.4,
+   "family": "Yi",
+   "auto": false
+  },
+  {
+   "id": "maziyarpanahi_yi_coder_1_5b_chat_gguf",
+   "name": "Yi Coder 1.5B",
+   "params": 1.5,
+   "family": "Yi",
+   "active": null,
+   "aggiornato": "2024-09-04",
+   "downloads": 165224,
+   "fonte": "MaziyarPanahi/Yi-Coder-1.5B-Chat-GGUF",
+   "auto": true
   }
  ],
  "efficiency": 0.65,
@@ -1221,10 +1400,10 @@
  ],
  "meta": {
   "nota": "Banda di memoria in GB/s (valori pratici). Token/s = banda/modello*0,65.",
-  "modelli": 54,
+  "modelli": 73,
   "cpu": 48,
   "gpu": 32,
-  "modelli_auto": 16,
+  "modelli_auto": 14,
   "dati_aggiornati": "2026-10-02"
  }
 }

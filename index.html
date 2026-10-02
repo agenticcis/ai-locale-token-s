@@ -225,7 +225,7 @@ function avvia(){
   $('ramsize').innerHTML = D.ram_sizes.map(g=>`<option value="${g}">${g} GB</option>`).join('');
   opt($('hd'), D.hd, h=>h.name);
   opt($('quant'), D.quants, q=>q.name);
-  opt($('model'), D.models, m=>m.name);
+  opt($('model'), D.models, m=>m.name + (m.auto ? ' (auto)' : ''));
   // Default robusto (gli id possono cambiare quando i modelli si aggiornano da soli):
   // Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + un modello ~1.5B in Q4.
   const scegli=(id,v)=>{ const s=$(id); if([...s.options].some(o=>o.value===v)) s.value=v; };

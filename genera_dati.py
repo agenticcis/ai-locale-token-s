@@ -44,9 +44,21 @@ def _unisci_modelli():
     n_nuovi = 0
     for m in auto:
         if not presente(m):
+            m = dict(m)
+            m["auto"] = True
             uniti.append(m)
             n_nuovi += 1
-    uniti.sort(key=lambda x: x["params"])
+    # Guardia anti-duplicati: senza questa, un modello ri-aggiunto a mano finisce due volte
+    # nella tendina. Si tiene il primo (i curati vengono prima degli automatici).
+    visti_id, visti_nome, senza_dup = set(), set(), []
+    for m in uniti:
+        m["auto"] = bool(m.get("auto"))
+        chiave = m["name"].lower()
+        if m["id"] in visti_id or chiave in visti_nome:
+            continue
+        visti_id.add(m["id"]); visti_nome.add(chiave); senza_dup.append(m)
+    uniti = senza_dup
+    uniti.sort(key=lambda x: x["name"].lower())
     return uniti, n_nuovi, aggiornato
 
 

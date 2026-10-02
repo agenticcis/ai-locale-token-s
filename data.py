@@ -148,11 +148,11 @@ HD_TYPES = [
 
 # --- Quantizzazioni: bit per peso. Meno bit = modello piu' piccolo = piu' veloce. ---
 QUANTS = [
-    {"id": "q3km",  "name": "Q3_K_M (~3,9 bit)", "bpw": 3.9},
-    {"id": "q4km",  "name": "Q4_K_M (~4,9 bit)", "bpw": 4.85},
-    {"id": "q5km",  "name": "Q5_K_M (~5,7 bit)", "bpw": 5.7},
-    {"id": "q6k",   "name": "Q6_K (~6,6 bit)",   "bpw": 6.6},
-    {"id": "q8",    "name": "Q8_0 (~8,5 bit)",   "bpw": 8.5},
+    {"id": "q3km",  "name": "Q3_K_M (3,9 bit per peso)", "bpw": 3.9},
+    {"id": "q4km",  "name": "Q4_K_M (4,9 bit per peso)", "bpw": 4.85},
+    {"id": "q5km",  "name": "Q5_K_M (5,7 bit per peso)", "bpw": 5.7},
+    {"id": "q6k",   "name": "Q6_K (6,6 bit per peso)",   "bpw": 6.6},
+    {"id": "q8",    "name": "Q8_0 (8,5 bit per peso)",   "bpw": 8.5},
     {"id": "fp16",  "name": "FP16 (16 bit)",     "bpw": 16.0},
 ]
 
@@ -196,6 +196,28 @@ MODELS = [
     {"id": "codellama_13b","name":"Code Llama 13B",         "params": 13.0,  "family": "Llama"},
     {"id": "vicuna_13b",  "name": "Vicuna 13B",             "params": 13.0,  "family": "Llama"},
     {"id": "openchat_7b", "name": "OpenChat 7B",            "params": 7.24,  "family": "Mistral"},
+    # --- aggiunti il 02/10 ---
+    {"id": "llama31_70b","name": "Llama 3.1 70B",           "params": 70.6,  "family": "Llama"},
+    {"id": "granite32_8b","name":"Granite 3.2 8B",          "params": 8.2,   "family": "Granite"},
+    {"id": "olmo2_13b",  "name": "OLMo 2 13B",              "params": 13.0,  "family": "OLMo"},
+    {"id": "command_r7b","name": "Command R7B",             "params": 7.6,   "family": "Cohere"},
+    {"id": "glm4_9b",    "name": "GLM-4 9B",                "params": 9.4,   "family": "GLM"},
+    {"id": "qwen25coder32b","name":"Qwen2.5-Coder 32B",     "params": 32.5,  "family": "Qwen"},
+    {"id": "hermes3_8b", "name": "Hermes 3 8B",             "params": 8.03,  "family": "Hermes"},
+    {"id": "nemotron_8b","name": "Nemotron 8B",             "params": 8.5,   "family": "Nemotron"},
+    {"id": "smallthinker_3b","name":"SmallThinker 3B",      "params": 3.0,   "family": "Qwen"},
+    {"id": "qwq_32b",    "name": "QwQ 32B",                 "params": 32.8,  "family": "Qwen"},
+    {"id": "exaone3_5_32b","name":"EXAONE 3.5 32B",         "params": 32.0,  "family": "EXAONE"},
+    {"id": "granite33_8b","name":"Granite 3.3 8B",          "params": 8.2,   "family": "Granite"},
+    {"id": "olmo2_7b",   "name": "OLMo 2 7B",               "params": 7.0,   "family": "OLMo"},
+    {"id": "gemma3_4b",  "name": "Gemma 3 4B",              "params": 4.3,   "family": "Gemma"},
+    {"id": "gemma3_12b", "name": "Gemma 3 12B",             "params": 12.2,  "family": "Gemma"},
+    {"id": "gemma3_27b", "name": "Gemma 3 27B",             "params": 27.4,  "family": "Gemma"},
+    {"id": "phi4_mini",  "name": "Phi-4 Mini 3.8B",         "params": 3.8,   "family": "Phi"},
+    {"id": "qwen25coder14b","name":"Qwen2.5-Coder 14B",     "params": 14.7,  "family": "Qwen"},
+    {"id": "llama31_405b","name":"Llama 3.1 405B",          "params": 405.0, "family": "Llama"},
+    {"id": "command_r_35b","name":"Command R 35B",          "params": 35.0,  "family": "Cohere"},
+    {"id": "falcon3_10b","name": "Falcon3 10B",             "params": 10.0,  "family": "Falcon"},
 ]
 
 # --- Fattori di correzione (dal modello fisico) ---
