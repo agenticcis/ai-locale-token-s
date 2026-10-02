@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quanti token al secondo? — Calcolatore AI in locale</title>
+<meta name="description" content="Scegli CPU, RAM, GPU, HD e modello: scopri la stima dei token al secondo del tuo PC per far girare un LLM in locale, e se il modello entra in VRAM o straripa in RAM.">
+<style>
+  :root{--bg:#0e1116;--card:#161b22;--bordo:#2b333d;--testo:#e6edf3;--dim:#9aa4b2;--acc:#4cc38a;--acc2:#58a6ff;--warn:#f0883e;--bad:#f85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--testo);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:28px 20px 10px;text-align:center}
+  header h1{margin:0 0 6px;font-size:26px}
+  header p{margin:0;color:var(--dim);font-size:15px}
+  main{max-width:940px;margin:0 auto;padding:10px 16px 60px}
+  .card{background:var(--card);border:1px solid var(--bordo);border-radius:14px;padding:18px}
+  .griglia{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  @media(max-width:640px){.griglia{grid-template-columns:1fr}}
+  label{display:block;font-size:13px;color:var(--dim);margin:0 0 4px}
+  select{width:100%;padding:10px;border-radius:9px;background:#0b0e12;color:var(--testo);border:1px solid var(--bordo);font-size:15px}
+  select:focus{outline:2px solid var(--acc2);outline-offset:1px}
+  .nota{font-size:12px;color:var(--dim);margin-top:5px;min-height:15px}
+  #risultato{margin-top:16px}
+  .big{font-size:44px;font-weight:800;line-height:1;color:var(--acc)}
+  .big small{font-size:16px;font-weight:600;color:var(--dim)}
+  .riga{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .pill{border:1px solid var(--bordo);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--dim)}
+  .valori{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-top:16px;font-size:14px}
+  .valori div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--bordo);padding:5px 0}
+  .valori b{color:var(--testo)}
+  .usi{margin-top:14px;font-size:14px}
+  .usi span{display:inline-block;margin:3px 6px 3px 0;padding:4px 10px;border-radius:8px;font-size:13px}
+  .ok{background:rgba(76,195,138,.15);color:var(--acc);border:1px solid rgba(76,195,138,.4)}
+  .no{background:rgba(248,81,73,.12);color:var(--bad);border:1px solid rgba(248,81,73,.35)}
+  .banner{margin-top:12px;padding:10px 13px;border-radius:9px;font-size:14px}
+  .b-ok{background:rgba(76,195,138,.12);border:1px solid rgba(76,195,138,.4)}
+  .b-warn{background:rgba(240,136,62,.12);border:1px solid rgba(240,136,62,.4)}
+  .b-bad{background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.4)}
+  footer{max-width:940px;margin:0 auto;padding:0 16px 50px;color:var(--dim);font-size:12.5px}
+  footer a{color:var(--acc2)}
+  .spiega{margin-top:22px;font-size:14px;color:var(--dim)}
+  .spiega h3{color:var(--testo);font-size:15px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Quanti token al secondo?</h1>
+  <p>Scegli il tuo PC e il modello: stima quanti token al secondo riesce a generare in locale.</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="griglia">
+      <div><label for="cpu">CPU</label><select id="cpu"></select><div class="nota" id="nota-cpu"></div></div>
+      <div><label for="ram">RAM</label><select id="ram"></select><div class="nota">Banda di sistema: conta in CPU-only e con GPU integrate.</div></div>
+      <div><label for="gpu">Scheda video (GPU)</label><select id="gpu"></select><div class="nota" id="nota-gpu"></div></div>
+      <div><label for="hd">HD / SSD</label><select id="hd"></select><div class="nota">Non cambia i token/s: cambia i tempi di caricamento del modello.</div></div>
+      <div><label for="model">Modello</label><select id="model"></select><div class="nota" id="nota-model"></div></div>
+      <div><label for="quant">Quantizzazione</label><select id="quant"></select><div class="nota">Meno bit = modello piu' piccolo = piu' veloce (e un po' meno preciso).</div></div>
+    </div>
+  </div>
+
+  <div class="card" id="risultato"></div>
+
+  <div class="spiega">
+    <h3>Come funziona la stima (in breve)</h3>
+    <p>Generare un token significa leggere <b>tutti i pesi del modello</b> dalla memoria. Non e' un
+    limite di calcolo, e' un limite di <b>banda di memoria</b>: token/s &asymp; banda &divide; dimensione del
+    modello &times; efficienza. Per questo un modello piccolo e quantizzato vola, e una GPU con banda
+    doppia va il doppio. Se il modello non entra nella VRAM, "straripa" nella RAM (10-20 volte piu'
+    lenta) e i token/s crollano.</p>
+    <p>Stima indicativa: la realta' varia circa &plusmn;35% con versione di Ollama, contesto, carico del sistema.
+    I valori di banda sono pratici, non da scheda tecnica.</p>
+  </div>
+</main>
+
+<footer>
+  <p id="locale">Dati aggiornati a mano. Modelli e nomi ricalcano il catalogo pubblico di Ollama / LM Studio.</p>
+  <p>Stime a scopo informativo. Realizzato da un agente AI (OpenHands) per conto del proprietario.</p>
+</footer>
+
+<script>
+const EFF = 0.65, OVERHEAD = 0.5;
+const FATT = {ddr3:0.55, ddr4:1.0, ddr5:1.25, lpddr5:1.2};
+let D = null;
+
+const $ = id => document.getElementById(id);
+const opt = (sel, arr, f) => { sel.innerHTML = arr.map(x=>`<option value="${x.id}">${f(x)}</option>`).join(''); };
+
+function risolviIgpu(cpu){
+  if(!cpu.igpu) return null;
+  if(typeof cpu.igpu === 'object') return cpu.igpu;
+  if(cpu.igpu === 'unified') return {name:'Memoria unificata (Apple)', vram:0, tput:0, unified:true};
+  const b = Object.assign({}, D.igpus[cpu.igpu]); b.key = cpu.igpu; return b;
+}
+
+function popolaGpu(){
+  const cpu = D.cpus.find(c=>c.id===$('cpu').value);
+  const g = [];
+  const ig = risolviIgpu(cpu);
+  if(ig) g.push({id:'igpu', name:ig.name, tipo:'integrata'});
+  D.gpus.forEach(x=>g.push({id:x.id, name:x.name, tipo:x.tipo||'discreta'}));
+  opt($('gpu'), g, x=>x.name);
+  notaGpu();
+}
+
+function notaGpu(){
+  const cpu = D.cpus.find(c=>c.id===$('cpu').value);
+  const ig = risolviIgpu(cpu);
+  if($('gpu').value==='igpu' && ig){
+    $('nota-gpu').textContent = ig.unified ? 'Memoria unificata: la GPU usa la RAM di sistema.'
+      : `Integrata nella CPU: usa la RAM di sistema (${ig.vram} GB riservabili).`;
+  } else {
+    $('nota-gpu').textContent = 'GPU discreta: se il modello ci entra, va molto piu veloce.';
+  }
+}
+
+function calcola(){
+  const cpu = D.cpus.find(c=>c.id===$('cpu').value);
+  const ram = D.ram.find(r=>r.id===$('ram').value);
+  const hd  = D.hd.find(h=>h.id===$('hd').value);
+  const model = D.models.find(m=>m.id===$('model').value);
+  const quant = D.quants.find(q=>q.id===$('quant').value);
+
+  const peso_gb = model.params * quant.bpw / 8;
+  const tot_gb = peso_gb + OVERHEAD;
+
+  let banda_vram, vram_disp, gpu_name, igpu = risolviIgpu(cpu);
+  if($('gpu').value==='igpu' && igpu){
+    gpu_name = igpu.name;
+    vram_disp = igpu.unified ? 999 : igpu.vram;
+    banda_vram = cpu.tput * (igpu.unified ? 1.0 : 0.85);
+  } else {
+    const g = D.gpus.find(x=>x.id===$('gpu').value);
+    gpu_name = g.name; vram_disp = g.vram; banda_vram = g.tput;
+  }
+  let banda_ram = cpu.tput * (FATT[ram.id]||1);
+  const fits = tot_gb <= vram_disp;
+  const banda = fits ? banda_vram : banda_ram;
+  const tps = banda / tot_gb * EFF;
+
+  const giud = tps<1?'Inutilizzabile':tps<5?'Molto lento':tps<10?'Usabile in chat':tps<20?'Scorrevole':'Molto veloce';
+  const cls = tps<5?'b-bad':tps<10?'b-warn':'b-ok';
+  const dove = $('gpu').value==='igpu' ? 'RAM condivisa' : (fits?'VRAM':'RAM (straripa: lento)');
+  const load = (tot_gb*1024/ (hd.read_mbps||500)).toFixed(1);
+
+  const usi = D.use_cases.map(u=>`<span class="${tps>=u.min_tps?'ok':'no'}">${u.name} ${tps>=u.min_tps?'✓':'✗'} (${u.min_tps}+ tok/s)</span>`).join('');
+
+  $('risultato').innerHTML = `
+    <div class="big">${tps.toFixed(1)} <small>token / secondo (stima)</small></div>
+    <div class="riga">
+      <span class="pill">intervallo reale: ${(tps*0.6).toFixed(1)} – ${(tps*1.3).toFixed(1)} tok/s</span>
+      <span class="pill">${giud}</span>
+      <span class="pill">modello in ${dove}</span>
+    </div>
+    <div class="banner ${cls}">
+      ${fits
+        ? ($('gpu').value==='igpu' && igpu && !igpu.unified
+            ? '✔ Il modello entra nella memoria condivisa (RAM): per una GPU integrata e gia il massimo.'
+            : '✔ Il modello entra nella memoria della GPU: velocita piena.')
+        : '⚠ Il modello NON entra: straripa e il collo di bottiglia diventa la RAM (molto piu lento).'}
+    </div>
+    <div class="valori">
+      <div>Dimensione modello <b>${peso_gb.toFixed(2)} GB</b></div>
+      <div>Con overhead <b>${tot_gb.toFixed(2)} GB</b></div>
+      <div>Memoria GPU disponibile <b>${igpu && $('gpu').value==='igpu' && igpu.unified ? 'condivisa' : vram_disp+' GB'}</b></div>
+      <div>Banda usata <b>${banda.toFixed(0)} GB/s</b></div>
+      <div>50 token (una risposta) <b>${tps>0?(50/tps).toFixed(1)+' s':'—'}</b></div>
+      <div>Caricamento da ${hd.name.split(' ')[0]} <b>${load} s</b></div>
+    </div>
+    <div class="usi"><b>Cosa ci puoi fare:</b><br>${usi}</div>`;
+}
+
+function aggiornaNotaModello(){
+  const m = D.models.find(x=>x.id===$('model').value);
+  $('nota-model').textContent = `${m.params} miliardi di parametri · famiglia ${m.family}`;
+}
+
+function avvia(){
+  opt($('cpu'), D.cpus, c=>c.name);
+  opt($('ram'), D.ram, r=>r.name);
+  opt($('hd'), D.hd, h=>h.name);
+  opt($('quant'), D.quants, q=>q.name);
+  opt($('model'), D.models, m=>m.name);
+  // default come l'esempio: Ryzen 5 3500U + Vega 8 + DDR4 + NVMe3 + Qwen2.5 1.5B Q4
+  $('cpu').value='r5_3500u'; $('ram').value='ddr4'; $('hd').value='nvme3';
+  $('model').value='qwen25_15b'; $('quant').value='q4km';
+  popolaGpu(); $('gpu').value='igpu';
+  ['cpu','ram','hd','quant','model'].forEach(id=>$(id).addEventListener('change',()=>{
+    if(id==='cpu'){ popolaGpu(); } if(id==='model'){ aggiornaNotaModello(); } calcola();
+  }));
+  $('gpu').addEventListener('change',()=>{ notaGpu(); calcola(); });
+  aggiornaNotaModello();
+  calcola();
+}
+
+fetch('data.json').then(r=>r.json()).then(d=>{ D=d; avvia(); })
+  .catch(e=>{ document.querySelector('main').innerHTML='<div class="card">Errore nel caricare data.json. Apri il sito da un server locale (non come file).</div>'; });
+</script>
+</body>
+</html>
