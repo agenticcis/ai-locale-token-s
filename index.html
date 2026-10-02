@@ -140,14 +140,15 @@ function calcola(){
   if($('gpu').value==='igpu' && igpu){
     gpu_name = igpu.name;
     banda_vram = cpu.tput * (igpu.unified ? 1.0 : 0.85);
-    // La memoria che la GPU integrata puo' davvero usare dipende dalla RAM installata:
-    // i produttori riservano circa meta' della RAM (min 2 GB), NON tutti i GB massimi.
-    vram_disp = igpu.unified ? ramGb*0.75 : Math.min(igpu.vram, Math.max(2, ramGb/2));
+    // GPU integrata (Apple e non): memoria CONDIVISA col sistema, non dedicata.
+    // Puo' usare ~75% della RAM installata (il resto serve a OS e contesto del modello).
+    vram_disp = ramGb*0.75;
   } else {
     const g = D.gpus.find(x=>x.id===$('gpu').value);
     gpu_name = g.name; vram_disp = g.vram; banda_vram = g.tput;
   }
   const banda_ram = cpu.tput * (FATT[ram.id]||1);
+  const isIgpu = $('gpu').value==='igpu' && !!igpu;
   const fits = tot_gb <= vram_disp;
   const fitsRam = tot_gb <= ramGb*0.9;
   const banda = fits ? banda_vram : banda_ram;
@@ -171,17 +172,17 @@ function calcola(){
     <div class="banner ${cls}">
       ${!fitsRam
         ? `✗ Il modello non entra nemmeno nella RAM (${ramGb} GB): serve pi&ugrave; memoria, o un modello pi&ugrave; piccolo / pi&ugrave; quantizzato.`
-        : fits
-          ? ($('gpu').value==='igpu' && igpu && !igpu.unified
-              ? '✔ Il modello entra nella memoria condivisa (RAM): per una GPU integrata e gia il massimo.'
-              : '✔ Il modello entra nella memoria della GPU: velocita piena.')
-          : '⚠ Il modello NON entra nella VRAM: straripa e il collo di bottiglia diventa la RAM (molto piu lento).'}
+        : isIgpu
+          ? '✔ Ci sta nella memoria condivisa col sistema (RAM): per una GPU integrata e gia il massimo.'
+          : (fits
+              ? '✔ Il modello entra nella memoria della GPU: velocita piena.'
+              : '⚠ Il modello NON entra nella VRAM: straripa in RAM e il collo di bottiglia diventa la RAM (piu lento).')}
     </div>
     <div class="valori">
       <div>Dimensione modello <b>${peso_gb.toFixed(2)} GB</b></div>
       <div>Con overhead <b>${tot_gb.toFixed(2)} GB</b></div>
       <div>RAM installata <b>${ramGb} GB</b></div>
-      <div>Memoria GPU disponibile <b>${igpu && $('gpu').value==='igpu' && igpu.unified ? (ramGb*0.75).toFixed(1)+' GB (unificata)' : vram_disp+' GB'}</b></div>
+      <div>Memoria GPU disponibile <b>${isIgpu ? (ramGb*0.75).toFixed(1)+' GB (condivisa)' : vram_disp+' GB'}</b></div>
       <div>Banda usata <b>${banda.toFixed(0)} GB/s</b></div>
       <div>50 token (una risposta) <b>${tps>0?(50/tps).toFixed(1)+' s':'—'}</b></div>
       <div>Caricamento da ${hd.name.split(' ')[0]} <b>${load} s</b></div>

@@ -15,16 +15,6 @@ from data import (CPUS, GPUS, IGPUS, QUANTS, MODELS, RAM_TYPES, RAM_SIZES, HD_TY
                   EFFICIENCY, OVERHEAD_GB, USE_CASES)
 
 
-def _vram_integrata(vram_max, ram_gb):
-    """Quanta RAM il sistema riserva davvero come VRAM per una GPU integrata.
-    I produttori danno un minimo (~2 GB) e un massimo, di solito META' della RAM
-    (su 16 GB si riservano ~8 GB, non tutti i 16). Prima si assumevano sempre i GB
-    massimi: era ottimistico e faceva entrare modelli che in pratica straripano."""
-    if ram_gb <= 0:
-        return vram_max
-    return min(vram_max, max(2.0, ram_gb / 2.0))
-
-
 def _trova(seq, id_):
     for x in seq:
         if x["id"] == id_:
@@ -100,12 +90,9 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id, ram_gb=16):
         gpu_name = igpu["name"]
         # una iGPU non-Apple usa la banda della RAM di sistema (- penalty per condivisione)
         banda_vram = cpu["tput"] * (1.0 if unified else 0.85)
-        if unified:
-            # Apple: memoria unificata, la GPU puo' usare ~75% della RAM installata
-            vram_disp = ram_gb * 0.75
-        else:
-            # iGPU su RAM di sistema: riserva ~meta' della RAM, entro il suo massimo
-            vram_disp = _vram_integrata(igpu["vram"], ram_gb)
+        # Integrate Apple E non-Apple: memoria CONDIVISA con il sistema, non dedicata.
+        # La GPU puo' usare ~75% della RAM installata (il resto serve a OS e contesto).
+        vram_disp = ram_gb * 0.75
     else:
         g = _trova(GPUS, gpu_id)
         gpu_name = g["name"]
