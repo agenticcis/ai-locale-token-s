@@ -25,11 +25,11 @@ CPUS = [
     {"id": "r9_9950x",  "name": "AMD Ryzen 9 9950X",      "brand": "AMD",   "tput": 89, "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
     {"id": "ai9_hx370", "name": "AMD Ryzen AI 9 HX 370",  "brand": "AMD",   "tput": 120, "igpu": "radeon890m"},
     {"id": "ai9_hx470", "name": "AMD Ryzen AI 9 HX 470",  "brand": "AMD",   "tput": 120, "igpu": "radeon890m"},
-    {"id": "ai_max_395","name": "AMD Ryzen AI Max+ 395 (Strix Halo)", "brand": "AMD", "tput": 256, "igpu": "radeon8060s"},
+    {"id": "ai_max_395","name": "AMD Ryzen AI Max+ 395 (Strix Halo)", "brand": "AMD", "tput": 256, "mem_fissa": True, "igpu": "radeon8060s"},
     {"id": "cu7_155h",  "name": "Intel Core Ultra 7 155H","brand": "Intel", "tput": 120, "igpu": "arc8core"},
-    {"id": "cu7_258v",  "name": "Intel Core Ultra 7 258V","brand": "Intel", "tput": 136, "igpu": "arc140v"},
+    {"id": "cu7_258v",  "name": "Intel Core Ultra 7 258V","brand": "Intel", "tput": 136, "mem_fissa": True, "igpu": "arc140v"},
     {"id": "cu9_285k",  "name": "Intel Core Ultra 9 285K","brand": "Intel", "tput": 89, "igpu": "arc4core"},
-    {"id": "sd_x_elite", "name": "Qualcomm Snapdragon X Elite", "brand": "Qualcomm", "tput": 135, "igpu": "adreno"},
+    {"id": "sd_x_elite", "name": "Qualcomm Snapdragon X Elite", "brand": "Qualcomm", "tput": 135, "mem_fissa": True, "igpu": "adreno"},
     {"id": "i5_8250u",  "name": "Intel Core i5-8250U",    "brand": "Intel", "tput": 34, "igpu": "uhd620"},
     {"id": "i5_1135g7", "name": "Intel Core i5-1135G7",   "brand": "Intel", "tput": 42, "igpu": "irisxe80"},
     {"id": "i7_1165g7", "name": "Intel Core i7-1165G7",   "brand": "Intel", "tput": 45, "igpu": "irisxe96"},
@@ -37,15 +37,30 @@ CPUS = [
     {"id": "i7_12700h", "name": "Intel Core i7-12700H",   "brand": "Intel", "tput": 65, "igpu": "irisxe96"},
     {"id": "i7_13700k", "name": "Intel Core i7-13700K",   "brand": "Intel", "tput": 78, "igpu": {"vram": 2, "tput": 14, "name": "UHD 770 (iGPU)"}},
     {"id": "i9_14900k", "name": "Intel Core i9-14900K",   "brand": "Intel", "tput": 88, "igpu": {"vram": 2, "tput": 14, "name": "UHD 770 (iGPU)"}},
-    {"id": "m1",        "name": "Apple M1",               "brand": "Apple", "tput": 68,   "igpu": "unified"},
-    {"id": "m2",        "name": "Apple M2",               "brand": "Apple", "tput": 100,  "igpu": "unified"},
-    {"id": "m2pro",     "name": "Apple M2 Pro",           "brand": "Apple", "tput": 200,  "igpu": "unified"},
-    {"id": "m3",        "name": "Apple M3",               "brand": "Apple", "tput": 100,  "igpu": "unified"},
-    {"id": "m3pro",     "name": "Apple M3 Pro",           "brand": "Apple", "tput": 150,  "igpu": "unified"},
-    {"id": "m3max",     "name": "Apple M3 Max",           "brand": "Apple", "tput": 300,  "igpu": "unified"},
-    {"id": "m4",        "name": "Apple M4",               "brand": "Apple", "tput": 120,  "igpu": "unified"},
-    {"id": "m4pro",     "name": "Apple M4 Pro",           "brand": "Apple", "tput": 273,  "igpu": "unified"},
-    {"id": "m4max",     "name": "Apple M4 Max",           "brand": "Apple", "tput": 410,  "igpu": "unified"},
+    {"id": "m1",        "name": "Apple M1",               "brand": "Apple", "tput": 68,   "mem_fissa": True, "igpu": "unified"},
+    {"id": "m2",        "name": "Apple M2",               "brand": "Apple", "tput": 100,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m2pro",     "name": "Apple M2 Pro",           "brand": "Apple", "tput": 200,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m3",        "name": "Apple M3",               "brand": "Apple", "tput": 100,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m3pro",     "name": "Apple M3 Pro",           "brand": "Apple", "tput": 150,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m3max",     "name": "Apple M3 Max",           "brand": "Apple", "tput": 300,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m4",        "name": "Apple M4",               "brand": "Apple", "tput": 120,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m4pro",     "name": "Apple M4 Pro",           "brand": "Apple", "tput": 273,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m4max",     "name": "Apple M4 Max",           "brand": "Apple", "tput": 410,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m1pro",     "name": "Apple M1 Pro",           "brand": "Apple", "tput": 200,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m1max",     "name": "Apple M1 Max",           "brand": "Apple", "tput": 400,  "mem_fissa": True, "igpu": "unified"},
+    {"id": "m2max",     "name": "Apple M2 Max",           "brand": "Apple", "tput": 400,  "mem_fissa": True, "igpu": "unified"},
+    # --- desktop / fascia media aggiunti su richiesta (02/10) ---
+    {"id": "r5_5700x3d","name": "AMD Ryzen 5 5700X3D",    "brand": "AMD",   "tput": 48,  "igpu": None},
+    {"id": "r5_7600",   "name": "AMD Ryzen 5 7600",       "brand": "AMD",   "tput": 85,  "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    {"id": "r7_9800x3d","name": "AMD Ryzen 7 9800X3D",    "brand": "AMD",   "tput": 90,  "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    {"id": "r7_8700g",  "name": "AMD Ryzen 7 8700G",      "brand": "AMD",   "tput": 90,  "igpu": "radeon780m"},
+    {"id": "r9_7945hx", "name": "AMD Ryzen 9 7945HX",     "brand": "AMD",   "tput": 80,  "igpu": {"vram": 2, "tput": 12, "name": "Radeon Graphics (iGPU)"}},
+    {"id": "cu5_125h",  "name": "Intel Core Ultra 5 125H", "brand": "Intel", "tput": 120, "igpu": "arc7core"},
+    {"id": "cu7_265k",  "name": "Intel Core Ultra 7 265K", "brand": "Intel", "tput": 90,  "igpu": "arc4core"},
+    {"id": "i7_14700k", "name": "Intel Core i7-14700K",   "brand": "Intel", "tput": 88,  "igpu": {"vram": 2, "tput": 14, "name": "UHD 770 (iGPU)"}},
+    {"id": "i5_1340p",  "name": "Intel Core i5-1340P",    "brand": "Intel", "tput": 80,  "igpu": "irisxe80"},
+    {"id": "n100",      "name": "Intel N100 (mini PC)",   "brand": "Intel", "tput": 25,  "igpu": "uhd24"},
+    {"id": "sd_x_plus", "name": "Qualcomm Snapdragon X Plus", "brand": "Qualcomm", "tput": 135, "mem_fissa": True, "igpu": "adreno"},
 ]
 
 # --- GPU INTEGRATE: il buco che nessun calcolatore copre. Usano le stesse RAM ---
@@ -65,6 +80,8 @@ IGPUS = {
     "arc140v":   {"name": "Intel Arc 140V (integrata)",        "vram": 16, "tput": 136},
     "arc4core":  {"name": "Intel Arc 4-core (integrata)",      "vram": 8,  "tput": 89},
     "adreno":    {"name": "Qualcomm Adreno (integrata)",       "vram": 16, "tput": 135},
+    "uhd24":     {"name": "Intel UHD 24EU (integrata)",        "vram": 2, "tput": 30},
+    "arc7core":  {"name": "Intel Arc 7-core (integrata)",       "vram": 16, "tput": 120},
     "unified":   {"name": "Memoria unificata Apple",           "vram": 0, "tput": 0},
 }
 
@@ -106,11 +123,13 @@ GPUS = [
 ]
 
 # --- Tipi di memoria di sistema (per il moltiplicatore HD/tipo RAM) ---
+# "ram_base": banda REALISTICA di quel tipo di memoria (dual-channel, valori pratici).
+# Non e' un'etichetta: e' un TETTO. Una CPU veloce non supera la banda della RAM che monta.
 RAM_TYPES = [
-    {"id": "ddr3",  "name": "DDR3",                "speed": "~1600 MT/s"},
-    {"id": "ddr4",  "name": "DDR4 (laptop)",       "speed": "2400-3200 MT/s"},
-    {"id": "ddr5",  "name": "DDR5 (laptop)",       "speed": "4800-5600 MT/s"},
-    {"id": "lpddr5","name": "LPDDR5 (saldata)",    "speed": "6400 MT/s"},
+    {"id": "ddr3",  "name": "DDR3",   "speed": "~1600 MT/s",                "ram_base": 25},
+    {"id": "ddr4",  "name": "DDR4",   "speed": "2400-3200 MT/s",            "ram_base": 45},
+    {"id": "ddr5",  "name": "DDR5",   "speed": "4800-6000 MT/s",            "ram_base": 90},
+    {"id": "lpddr5","name": "LPDDR5", "speed": "6400-8500 MT/s (saldata)",  "ram_base": 130},
 ]
 
 # --- QUANTITA' di RAM (GB). Conta per: memoria condivisa della GPU integrata, VRAM

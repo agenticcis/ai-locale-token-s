@@ -88,20 +88,25 @@ def stima(cpu_id, gpu_id, ram_id, hd_id, model_id, quant_id, ram_gb=16):
     # Mai far dipendere la banda dalla capacita': sarebbe un'illusione (64 GB non velocizzano
     # una macchina lenta). Il "tput" della CPU e' gia' la banda reale della sua RAM tipica;
     # il tipo di RAM scelto la scala se molto piu' lenta/veloce.
-    fattore_ram = {"ddr3": 0.55, "ddr4": 1.0, "ddr5": 1.25, "lpddr5": 1.2}.get(ram["id"], 1.0)
-    if cpu.get("igpu") == "unified":
-        # Apple: il "tput" E' gia' la banda reale della memoria unificata (LPDDR5 saldata).
-        # Moltiplicarla di nuovo doppierebbe un guadagno che non esiste.
-        fattore_ram = 1.0
-    banda_sistema = cpu["tput"] * fattore_ram
+    # Il tput della CPU e' la banda della RAM tipica di quella macchina. Non la si AUMENTA
+    # mai: cambiare tipo di RAM puo' solo ridurla (es. un i7-14700K con DDR4 non va a 88 GB/s).
+    # La si limita con la banda reale del tipo scelto, perche' una CPU non supera i suoi moduli.
+    if cpu.get("mem_fissa"):
+        # Memoria saldata/unificata (Apple, Strix Halo, Snapdragon): banda fissa nel SoC,
+        # non dipende da moduli scambiabili -> non la tocca il tipo di RAM scelto.
+        banda_sistema = cpu["tput"]
+    else:
+        banda_sistema = min(cpu["tput"], ram["ram_base"])
 
     if gpu_id == "igpu":
         igpu = _risolvi_igpu(cpu.get("igpu"))
         if igpu:
             unified = igpu.get("unified", False)
             gpu_name = igpu["name"]
-            # iGPU (Apple o Intel/AMD/Qualcomm) = memoria condivisa, ~75% della RAM installata.
-            banda_vram = banda_sistema * (1.0 if unified else 0.85)
+            # Memoria condivisa: la GPU legge dalla STESSA RAM. La banda e' quella di sistema,
+            # senza penalita' inventate (altrimenti un modello che "straripa" risulterebbe piu'
+            # veloce di uno che ci sta, a parita' di macchina).
+            banda_vram = banda_sistema
             vram_disp = ram_gb * 0.75
         else:
             # CPU senza GPU integrata: inferenza sulla CPU, banda = RAM di sistema.

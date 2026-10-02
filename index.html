@@ -86,7 +86,8 @@
 
 <script>
 const EFF = 0.65, OVERHEAD = 0.5;
-const FATT = {ddr3:0.55, ddr4:1.0, ddr5:1.25, lpddr5:1.2};
+// La banda non si "aumenta" cambiando RAM: il tput della CPU e' la banda della sua RAM
+// tipica, e il tipo scelto la limita al massimo reale di quella memoria (ram_base).
 let D = null;
 
 const $ = id => document.getElementById(id);
@@ -139,12 +140,11 @@ function calcola(){
   const tot_gb = peso_gb + OVERHEAD;
 
   // Il tipo di RAM decide la BANDA (velocita'); la quantita' decide solo la CAPACITA'.
-  // Apple: il tput E' gia' la banda della memoria unificata, niente doppio moltiplicatore.
-  const banda_sistema = cpu.tput * (cpu.igpu==='unified' ? 1 : (FATT[ram.id]||1));
+  const banda_sistema = cpu.mem_fissa ? cpu.tput : Math.min(cpu.tput, ram.ram_base);
   let banda_vram, vram_disp, gpu_name, igpu = risolviIgpu(cpu);
   if($('gpu').value==='igpu' && igpu){
     gpu_name = igpu.name;
-    banda_vram = banda_sistema * (igpu.unified ? 1.0 : 0.85);
+    banda_vram = banda_sistema;
     // GPU integrata (Apple e non): memoria CONDIVISA col sistema, non dedicata.
     // Puo' usare ~75% della RAM installata (il resto serve a OS e contesto del modello).
     vram_disp = ramGb*0.75;
